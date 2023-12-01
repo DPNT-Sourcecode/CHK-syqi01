@@ -14,11 +14,6 @@ def sum(x: int, y: int) -> int:
     return x + y
 
 
-
-
-
-
-
 class DataAnalyzer:
     @staticmethod
     def calculate_standard_deviation(data: List[Union[int, float]]) -> float:
@@ -31,13 +26,14 @@ class DataAnalyzer:
         if n < 2:
             return (0, 0)  # Returning default values for insufficient points
 
-        sum_x = sum(point[0] for point in points)
-        sum_y = sum(point[1] for point in points)
-        sum_x2 = sum(point[0] ** 2 for point in points)
-        sum_xy = sum(point[0] * point[1] for point in points)
+        sum_x: int = sum(point[0] for point in points)  # Sum of x-coordinates
+        sum_y: int = sum(point[1] for point in points)  # Sum of y-coordinates
+        sum_x2: int = sum(point[0] ** 2 for point in points)  # Sum of squared x-coordinates
+        sum_xy: int = sum(point[0] * point[1] for point in points)  # Sum of product of x and y coordinates
 
-        denominator = n * sum_x2 - sum_x**2
+        denominator: int = n * sum_x2 - sum_x**2
         if denominator == 0:
+            raise ValueError("LINREG: div 0 error")
             return (0, 0)  # Prevent division by zero
 
         slope = (n * sum_xy - sum_x * sum_y) / denominator
@@ -70,9 +66,9 @@ class DataAnalyzer:
                 f"Test: {test_input}, Expected: {expected}, Result: {result_rounded} ... {'PASSED' if result_rounded == expected else 'FAILED'}\n"
             )
 
-if__name__ == "__main__":
+
+if __name__ == "__main__":
     # Instantiate class and call test method to test
     print(sum(7, 99))
     print("\n")
     DataAnalyzer.test()
-
