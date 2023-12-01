@@ -27,8 +27,8 @@ class DataAnalyzer:
         return median(data)
 
     @staticmethod
-    def calculate_mode(data: List[Union[int, float]]) -> List[int]:
-        return multimode(data)
+    def calculate_mode(data: List[float]) -> List[int]:
+        return multimode(data)  # type: ignore. mulitmode can handle floats #TODO - check
 
     @staticmethod
     def calculate_standard_deviation(data: List[Union[int, float]]) -> float:
@@ -102,4 +102,5 @@ TODO 8: Consider integration with data visualization tools for analysis insights
 TODO 9: Investigate parallel processing options for handling very large datasets.
 TODO 10: Ensure compatibility with different Python versions and environments.
 """
+
 

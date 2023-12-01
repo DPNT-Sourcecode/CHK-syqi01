@@ -27,6 +27,57 @@ from lib.solutions.SUM.sum_solution_alex import DataAnalyzer  # noqa: E402
 
 
 class TestDataAnalyzer(TestCase):
+    def test_calculate_mean(self):
+        test_cases = [
+            ([1, 2, 3, 4, 5], 3.0),
+            ([1.5, 2.5, 3.5, 4.5, 5.5], 3.5),
+            ([], None),  # Handling empty list
+            ("not a list", None),  # Handling invalid input
+        ]
+
+        for data, expected in test_cases:
+            with self.subTest(data=data):
+                if isinstance(data, list):
+                    result = DataAnalyzer.calculate_mean(data)
+                    self.assertEqual(result, expected)
+                else:
+                    with self.assertRaises(TypeError):
+                        DataAnalyzer.calculate_mean(data)
+
+    def test_calculate_median(self):
+        test_cases = [
+            ([1, 2, 3, 4, 5], 3),
+            ([5, 4, 3, 2, 1], 3),
+            ([], None),  # Handling empty list
+            ("not a list", None),  # Handling invalid input
+        ]
+
+        for data, expected in test_cases:
+            with self.subTest(data=data):
+                if isinstance(data, list):
+                    result = DataAnalyzer.calculate_median(data)
+                    self.assertEqual(result, expected)
+                else:
+                    with self.assertRaises(TypeError):
+                        DataAnalyzer.calculate_median(data)
+
+    def test_calculate_mode(self):
+        test_cases = [
+            ([1, 2, 3, 3, 4], [3]),
+            ([1, 1, 2, 2, 3, 3, 4], [1, 2, 3]),
+            ([], []),  # Handling empty list
+            ("not a list", None),  # Handling invalid input
+        ]
+
+        for data, expected in test_cases:
+            with self.subTest(data=data):
+                if isinstance(data, list):
+                    result = DataAnalyzer.calculate_mode(data)
+                    self.assertEqual(result, expected)
+                else:
+                    with self.assertRaises(TypeError):
+                        DataAnalyzer.calculate_mode(data)
+
     def test_calculate_standard_deviation(self):
         # Define test cases
         test_cases = [([1, 2, 3, 4, 5], 1.581), ([10, 10, 10, 10, 10], 0), ([1.5, 2.5, 3.5, 4.5, 5.5], 1.581)]
@@ -57,3 +108,4 @@ class TestDataAnalyzer(TestCase):
 if __name__ == "__main__":
     django.test.utils.setup_test_environment()  # type: ignore
     django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])  # type: ignore
+
