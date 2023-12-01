@@ -74,5 +74,3 @@ if __name__ == "__main__":
     print(sum_lt_100(7, 99))
     print("\n")
     DataAnalyzer.test()
-
-
