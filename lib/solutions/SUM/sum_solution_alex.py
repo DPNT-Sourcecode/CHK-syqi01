@@ -1,6 +1,10 @@
-from statistics import mean, stdev
-from typing import List, Tuple, Union
 import math
+from statistics import stdev
+from typing import List, Tuple, Union
+
+
+def sum(data):
+    return sum(data)
 
 
 # sys.path.append("/Users/alexfoster/Documents/Code/accelerate_runner")
@@ -8,10 +12,10 @@ import math
 # print(sys.path)
 
 
-def sum(x: float, y: float) -> float:
-    if not (0 <= x <= 100) or not (0 <= y <= 100):
-        raise ValueError("Arguments must be integers between 1 and 100 (inclusive)")
-    return x + y
+# def sum(x: float, y: float) -> float:
+#     if not (0 <= x <= 100) or not (0 <= y <= 100):
+#         raise ValueError("Arguments must be integers between 1 and 100 (inclusive)")
+#     return x + y
 
 
 class DataAnalyzer:
@@ -76,6 +80,7 @@ if __name__ == "__main__":
     print(sum(7, 99))
     print("\n")
     DataAnalyzer.test()
+
 
 
 
