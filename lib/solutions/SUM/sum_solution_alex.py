@@ -1,8 +1,7 @@
-# Where:
-#  - param[0] = a positive integer between 0-100
-#  - param[1] = a positive integer between 0-100
-#  - @return = an Integer representing the sum of the two numbers
-# import sys
+from statistics import mean, stdev
+from typing import List, Tuple, Union
+import math
+
 
 # sys.path.append("/Users/alexfoster/Documents/Code/accelerate_runner")
 
@@ -15,11 +14,9 @@ def sum(x: int, y: int) -> int:
     return x + y
 
 
-print(sum(7, 99))
 
-from statistics import mean, stdev
-from typing import List, Tuple, Union
-import math
+
+
 
 
 class DataAnalyzer:
@@ -73,7 +70,9 @@ class DataAnalyzer:
                 f"Test: {test_input}, Expected: {expected}, Result: {result_rounded} ... {'PASSED' if result_rounded == expected else 'FAILED'}\n"
             )
 
-
-# Instantiate class and call test method to test
-DataAnalyzer.test()
+if__name__ == "__main__":
+    # Instantiate class and call test method to test
+    print(sum(7, 99))
+    print("\n")
+    DataAnalyzer.test()
 
