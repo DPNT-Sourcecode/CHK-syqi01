@@ -39,8 +39,8 @@ class TestDataAnalyzer(TestCase):
         ]
 
         # Run and assert tests
-        for points, expected in test_cases:
-            with self.subTest(points=points):  # Tdodo - not loop
+        for points, expected in test_cases:  # TODO - not loop
+            with self.subTest(points=points):
                 slope, intercept = DataAnalyzer.calculate_linear_regression(points)
                 self.assertAlmostEqual(slope, expected[0], places=2)
                 self.assertAlmostEqual(intercept, expected[1], places=2)
@@ -48,12 +48,8 @@ class TestDataAnalyzer(TestCase):
 
 # Run the tests
 if __name__ == "__main__":
-    django.test.utils.setup_test_environment()
-    django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])
+    django.test.utils.setup_test_environment()  # type: ignore
+    django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])  # type: ignore
 
-# Run the tests
-if __name__ == "__main__":
-    django.test.utils.setup_test_environment()
-    django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])
 
 
