@@ -21,7 +21,7 @@ class DataAnalyzer:
         return 0 if len(data) < 2 else stdev(data)
 
     @staticmethod
-    def calculate_linear_regression(points: List[Tuple[int, int]]) -> Tuple[float, float]:
+    def calculate_linear_regression(points: List[Tuple[int, int]]) -> Union[Tuple[float, float], Tuple[int, int]]:
         n = len(points)
         if n < 2:
             return (0, 0)  # Returning default values for insufficient points
@@ -34,11 +34,8 @@ class DataAnalyzer:
         denominator: int = n * sum_x2 - sum_x**2
 
         # Prevent division by zero
-        try:
-            if denominator == 0:
-                raise ValueError("LINREG: div 0 error")
-        except ValueError:
-            return (0, 0)
+        if denominator == 0:
+            return (0, 0)  # or raise an exception, as you prefer
 
         slope: float = (n * sum_xy - sum_x * sum_y) / denominator
         intercept: float = (sum_y - slope * sum_x) / n
@@ -76,4 +73,5 @@ if __name__ == "__main__":
     print(sum(7, 99))
     print("\n")
     DataAnalyzer.test()
+
 
