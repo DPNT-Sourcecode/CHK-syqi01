@@ -2,6 +2,9 @@
 #  - param[0] = a positive integer between 0-100
 #  - param[1] = a positive integer between 0-100
 #  - @return = an Integer representing the sum of the two numbers
+import sys
+
+sys.path.append("/Users/alexfoster/Documents/Code/accelerate_runner")
 
 
 def sum(x: int, y: int) -> int:
@@ -11,4 +14,5 @@ def sum(x: int, y: int) -> int:
 
 
 print(sum(7, 99))
+
 
