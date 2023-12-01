@@ -1,0 +1,10 @@
+{
+    "reportMissingTypeStubs": false,
+    "useLibraryCodeForTypes": true,
+    "typeCheckingMode": "basic",
+    "linting": {
+      "enabled": true,
+      "pylintEnabled": true,
+      "flake8Enabled": true
+    }
+  }
