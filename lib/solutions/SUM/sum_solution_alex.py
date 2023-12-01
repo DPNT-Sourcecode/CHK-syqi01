@@ -26,7 +26,7 @@ class DataAnalyzer:
 
     @staticmethod
     def calculate_linear_regression(points: List[Tuple[float, float]]) -> Tuple[float, float]:
-        n = len(points)
+        n: int = len(points)
         if n < 2:
             return (0, 0)  # Returning default values for insufficient points
 
@@ -50,7 +50,7 @@ class DataAnalyzer:
         return slope, intercept
 
     @staticmethod
-    def test():
+    def test() -> None:
         # Testing Standard Deviation
         print("Testing Standard Deviation:")
         tests = [([1, 2, 3, 4, 5], 1.581), ([10, 10, 10, 10, 10], 0), ([1.5, 2.5, 3.5, 4.5, 5.5], 1.581)]
@@ -77,6 +77,7 @@ class DataAnalyzer:
 
 if __name__ == "__main__":
     # Instantiate class and call test method to test
-    print(sum(7, 99))
+    print(sum_lt_100()(7, 99))
     print("\n")
     DataAnalyzer.test()
+
