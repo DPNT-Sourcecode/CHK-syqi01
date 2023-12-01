@@ -29,10 +29,12 @@ class DataAnalyzer:
         if n < 2:
             return (0, 0)  # Returning default values for insufficient points
 
-        sum_x = sum(point[0] for point in points)
-        sum_y = sum(point[1] for point in points)
-        sum_x2 = sum(point[0] ** 2 for point in points)
-        sum_xy = sum(point[0] * point[1] for point in points)
+        sum_x, sum_y, sum_x2, sum_xy = (
+            sum(p[0] for p in points),
+            sum(p[1] for p in points),
+            sum(p[0] ** 2 for p in points),
+            sum(p[0] * p[1] for p in points),
+        )
 
         denominator = n * sum_x2 - sum_x**2
         if denominator == 0:
@@ -74,3 +76,4 @@ if __name__ == "__main__":
     print(sum_lt_100(7, 99))
     print("\n")
     DataAnalyzer.test()
+
