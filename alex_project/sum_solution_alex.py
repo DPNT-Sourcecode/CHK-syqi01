@@ -6,6 +6,8 @@ import sys
 
 sys.path.append("/Users/alexfoster/Documents/Code/accelerate_runner")
 
+print(sys.path)
+
 
 def sum(x: int, y: int) -> int:
     if not (0 <= x <= 100) or not (0 <= y <= 100):
@@ -14,5 +16,6 @@ def sum(x: int, y: int) -> int:
 
 
 print(sum(7, 99))
+
 
 
