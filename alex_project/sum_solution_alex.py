@@ -16,6 +16,3 @@ def sum(x: int, y: int) -> int:
 
 
 print(sum(7, 99))
-
-
-
