@@ -57,7 +57,3 @@ class TestDataAnalyzer(TestCase):
 if __name__ == "__main__":
     django.test.utils.setup_test_environment()  # type: ignore
     django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])  # type: ignore
-
-
-
-
