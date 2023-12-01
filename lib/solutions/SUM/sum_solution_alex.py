@@ -29,7 +29,7 @@ class DataAnalyzer:
         sum_x: float = sum(point[0] for point in points)  # Sum of x-coord
         sum_y: float = sum(point[1] for point in points)  # Sum of y-coordinates
         sum_x2: float = sum(point[0] ** 2 for point in points)  # Sum of squared x-coordinates
-        sum_xy: float = sum(point[0] * point[1] for point in points)  # Sum of product of x and y coordinates
+        sum_xy: float = sum(point[0] * point[1] for point in points)  # Sum of product o f x and y coordinates
 
         denominator: float = n * sum_x2 - sum_x**2
 
@@ -76,6 +76,7 @@ if __name__ == "__main__":
     print(sum(7, 99))
     print("\n")
     DataAnalyzer.test()
+
 
 
 
