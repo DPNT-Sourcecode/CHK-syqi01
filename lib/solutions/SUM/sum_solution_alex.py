@@ -2,7 +2,6 @@ import math
 from statistics import stdev
 from typing import List, Tuple, Union
 
-
 # def sum(data: List[float]) -> float:
 #     return sum(data=data)
 
@@ -20,37 +19,32 @@ def sum_lt_100(x: float, y: float) -> float:
 
 class DataAnalyzer:
     @staticmethod
-    def calculate_standard_deviation(data: List[Union[float, float]]) -> float:
+    def calculate_standard_deviation(data: List[Union[int, float]]) -> float:
         # Handling for empty list or single element
         return 0 if len(data) < 2 else stdev(data)
 
     @staticmethod
-    def calculate_linear_regression(points: List[Tuple[float, float]]) -> Tuple[float, float]:
-        n: int = len(points)
+    def calculate_linear_regression(points: List[Tuple[int, int]]) -> Tuple[float, float]:
+        n = len(points)
         if n < 2:
             return (0, 0)  # Returning default values for insufficient points
 
-        sum_x: float = sum(point[0] for point in points)  # Sum of x-coord
-        sum_y: float = sum(point[1] for point in points)  # Sum of y-coordinates
-        sum_x2: float = sum(point[0] ** 2 for point in points)  # Sum of squared x-coordinates
-        sum_xy: float = sum(point[0] * point[1] for point in points)  # Sum of product o f x and y coordinates
+        sum_x = sum(point[0] for point in points)
+        sum_y = sum(point[1] for point in points)
+        sum_x2 = sum(point[0] ** 2 for point in points)
+        sum_xy = sum(point[0] * point[1] for point in points)
 
-        denominator: float = n * sum_x2 - sum_x**2
+        denominator = n * sum_x2 - sum_x**2
+        if denominator == 0:
+            return (0, 0)  # Prevent division by zero
 
-        # Prevent division by zero
-        try:
-            if denominator == 0:
-                raise ValueError("LINREG: div 0 error")
-        except ValueError:
-            return (0, 0)
-
-        slope: float = (n * sum_xy - sum_x * sum_y) / denominator
-        intercept: float = (sum_y - slope * sum_x) / n
+        slope = (n * sum_xy - sum_x * sum_y) / denominator
+        intercept = (sum_y - slope * sum_x) / n
 
         return slope, intercept
 
     @staticmethod
-    def test() -> None:
+    def test():
         # Testing Standard Deviation
         print("Testing Standard Deviation:")
         tests = [([1, 2, 3, 4, 5], 1.581), ([10, 10, 10, 10, 10], 0), ([1.5, 2.5, 3.5, 4.5, 5.5], 1.581)]
@@ -77,7 +71,8 @@ class DataAnalyzer:
 
 if __name__ == "__main__":
     # Instantiate class and call test method to test
-    print(sum_lt_100()(7, 99))
+    print(sum_lt_100(7, 99))
     print("\n")
     DataAnalyzer.test()
+
 
