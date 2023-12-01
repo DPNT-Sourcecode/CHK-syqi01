@@ -1,6 +1,6 @@
 import math
-from statistics import stdev
-from typing import List, Tuple, Union
+from statistics import mean, median, multimode, stdev
+from typing import Any, List, Tuple, Union
 
 # def sum(data: List[float]) -> float:
 #     return sum(data=data)
@@ -18,6 +18,18 @@ def sum_lt_100(x: float, y: float) -> float:
 
 
 class DataAnalyzer:
+    @staticmethod
+    def calculate_mean(data: List[Union[int, float]]) -> float:
+        return mean(data)
+
+    @staticmethod
+    def calculate_median(data: List[Union[int, float]]) -> float:
+        return median(data)
+
+    @staticmethod
+    def calculate_mode(data: List[Union[int, float]]) -> List[int]:
+        return multimode(data)
+
     @staticmethod
     def calculate_standard_deviation(data: List[Union[int, float]]) -> float:
         # Handling for empty list or single element
@@ -76,3 +88,18 @@ if __name__ == "__main__":
     print(sum_lt_100(7, 99))
     print("\n")
     DataAnalyzer.test()
+
+# TODOs at the end of the snippet
+"""
+TODO 1: Implement error handling for empty lists or invalid inputs.
+TODO 2: Consider alternative algorithms for performance optimization.
+TODO 3: Extend functionality to handle more complex data structures.
+TODO 4: Add more comprehensive tests, especially for edge cases.
+TODO 5: Explore the use of numpy for performance improvements on large datasets.
+TODO 6: Implement logging for better traceability and debugging.
+TODO 7: Review and refine type annotations for clarity and consistency.
+TODO 8: Consider integration with data visualization tools for analysis insights.
+TODO 9: Investigate parallel processing options for handling very large datasets.
+TODO 10: Ensure compatibility with different Python versions and environments.
+"""
+
