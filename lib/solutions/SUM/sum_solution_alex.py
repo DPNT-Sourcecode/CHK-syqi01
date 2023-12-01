@@ -32,12 +32,16 @@ class DataAnalyzer:
         sum_xy: int = sum(point[0] * point[1] for point in points)  # Sum of product of x and y coordinates
 
         denominator: int = n * sum_x2 - sum_x**2
-        if denominator == 0:
-            raise ValueError("LINREG: div 0 error")
-            return (0, 0)  # Prevent division by zero
 
-        slope = (n * sum_xy - sum_x * sum_y) / denominator
-        intercept = (sum_y - slope * sum_x) / n
+        # Prevent division by zero
+        try:
+            if denominator == 0:
+                raise ValueError("LINREG: div 0 error")
+        except ValueError:
+            return (0, 0)
+
+        slope: float = (n * sum_xy - sum_x * sum_y) / denominator
+        intercept: float = (sum_y - slope * sum_x) / n
 
         return slope, intercept
 
@@ -72,3 +76,4 @@ if __name__ == "__main__":
     print(sum(7, 99))
     print("\n")
     DataAnalyzer.test()
+
