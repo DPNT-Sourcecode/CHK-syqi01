@@ -9,7 +9,14 @@ settings.configure(
     INSTALLED_APPS=[
         # List any apps that your tests need to be aware of
     ],
-    # Any other settings required for your tests
+    SECRET_KEY="a-very-secret-key",
+    DATABASES={
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    },
+    # ... other settings as needed ...
 )
 
 # Initialize Django
@@ -50,6 +57,7 @@ class TestDataAnalyzer(TestCase):
 if __name__ == "__main__":
     django.test.utils.setup_test_environment()  # type: ignore
     django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])  # type: ignore
+
 
 
 
