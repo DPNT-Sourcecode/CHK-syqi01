@@ -16,7 +16,7 @@ settings.configure(
 django.setup()
 
 # Your DataAnalyzer class (or import it if it's defined elsewhere)
-from sum_solution_alex import DataAnalyzer  # noqa: E402
+from lib.solutions.SUM.sum_solution_alex import DataAnalyzer  # noqa: E402
 
 
 # Test cases
@@ -36,3 +36,4 @@ class TestDataAnalyzer(TestCase):
 if __name__ == "__main__":
     django.test.utils.setup_test_environment()
     django.test.runner.DiscoverRunner().run_tests(["test_data_analyzer"])
+
