@@ -29,6 +29,7 @@ MANIFEST
 
 # Virtualenv stuff
 env/
+.venv/
 venv/
 pyvenv/
 ENV/
@@ -49,4 +50,5 @@ coverage.tdl
 .coverage
 jre/
 record/
+
 
