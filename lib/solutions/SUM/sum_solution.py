@@ -1,17 +1,12 @@
 # noinspection PyShadowingBuiltins,PyUnusedLocal
 
-# Where:
-#  - param[0] = a positive integer between 0-100
-#  - param[1] = a positive integer between 0-100
-#  - @return = an Integer representing the sum of the two numbers
+from alex_project.sum_solution_alex import sum
 
-
-def sum(x: int, y: int) -> int:
-    if not (0 <= x <= 100) or not (0 <= y <= 100):
-        raise ValueError("Arguments must be integers between 1 and 100 (inclusive)")
-    return x + y
+print(sum(7, 99))
 
 
 def compute(x, y):
-    sum(7, 99)
+    # sum(7, 99)
+    raise NotImplementedError()
+
 
