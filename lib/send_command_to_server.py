@@ -1,20 +1,16 @@
 import sys
-from tdl.queue.queue_based_implementation_runner import QueueBasedImplementationRunnerBuilder
-from tdl.runner.challenge_session import ChallengeSession
-from solutions.SUM import sum_solution
-from solutions.HLO import hello_solution
+
+from runner.user_input_action import get_user_input
+from runner.utils import Utils
 from solutions.ARRS import array_sum
-from solutions.IRNG import int_range
-from solutions.FIZ import fizz_buzz_solution
 from solutions.CHK import checkout_solution
 from solutions.CHL import checklite_solution
-from runner.utils import Utils
-from runner.user_input_action import get_user_input
-
-# turn off linters for this file
-# pylint: disable=missing-docstring
-# pylint: disable=unused-argument
-# pylint: disable
+from solutions.FIZ import fizz_buzz_solution
+from solutions.HLO import hello_solution
+from solutions.IRNG import int_range
+from solutions.SUM import sum_solution
+from tdl.queue.queue_based_implementation_runner import QueueBasedImplementationRunnerBuilder
+from tdl.runner.challenge_session import ChallengeSession
 
 """
   ~~~~~~~~~~ Running the system: ~~~~~~~~~~~~~
@@ -75,3 +71,4 @@ runner = (
 ChallengeSession.for_runner(runner).with_config(Utils.get_config()).with_action_provider(
     lambda: get_user_input(sys.argv[1:])
 ).start()
+
