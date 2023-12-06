@@ -29,7 +29,6 @@ MANIFEST
 
 # Virtualenv stuff
 env/
-.venv/
 venv/
 pyvenv/
 ENV/

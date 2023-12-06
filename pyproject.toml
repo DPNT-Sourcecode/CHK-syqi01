@@ -12,6 +12,3 @@ exclude = '''
   | migrations
 )
 '''
-
-[tool.type4py]
-server = "local"
