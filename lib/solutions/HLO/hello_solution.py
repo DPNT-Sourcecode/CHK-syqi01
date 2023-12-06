@@ -23,5 +23,3 @@ def hello(friend_name):
     print(hello("anything"))  # remove
     return "Hello, world!"
     # raise NotImplementedError()
-
-
