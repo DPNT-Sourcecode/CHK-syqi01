@@ -11,8 +11,11 @@ print(words)
 
 
 # Test for the function
-def test_hello():
-    assert hello("any string") == "Hello, world!"
+# test class
+class TestHelloWorld:
+    # test method
+    def test_hello(self):
+        assert hello("any string") == "Hello, world!"
 
 
 # This allows pytest to run the test when this file is executed
@@ -20,5 +23,3 @@ if __name__ == "__main__":
     import pytest
 
     pytest.main()
-
-
