@@ -38,11 +38,14 @@ class Checkout:
 
         for sku, count in counts.items():
             if sku == "A":
-                total += (
-                    (count // 5) * 200
-                    + ((count % 5) // 3) * 130
-                    + ((count % 5) % 3) * self.prices[sku]
-                )
+                # Apply 5-for-200 offer
+                total += (count // 5) * 200
+                remaining_A = count % 5
+                # Apply 3-for-130 offer if applicable
+                total += (remaining_A // 3) * 130
+                remaining_A %= 3
+                # Price remaining 'A's individually
+                total += remaining_A * self.prices["A"]
             elif (
                 sku in self.offers
                 and "quantity" in self.offers[sku]
@@ -195,4 +198,5 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
