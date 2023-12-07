@@ -43,4 +43,3 @@ print(hello("John"))  # Should print "Hello, John!"
 # Where:
 #  - param[0] = a String containing a name
 #  - @return = a String containing a message
-
