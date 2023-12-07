@@ -8,5 +8,7 @@ def hello(param):
     message = "Hello, World!"
     return message
 
+hello("world!")
+
 
 
