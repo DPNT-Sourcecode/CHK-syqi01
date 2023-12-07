@@ -11,6 +11,19 @@ class TestCheckout:
     @pytest.mark.parametrize(
         "skus, expected",
         [
+            ("ABCD", 115),
+            ("AAAA", 180),
+            ("", 0),
+            ("AAAB", 160),
+            ("AB", 80),
+        ],
+    )
+    def test_calculate_price_with_valid_inputs(self, checkout_system, skus, expected):
+        assert checkout_system.calculate_price(skus) == expected
+
+    @pytest.mark.parametrize(
+        "skus, expected",
+        [
             (None, -1),
             (123, -1),
             (["A", "B"], -1),
@@ -22,6 +35,7 @@ class TestCheckout:
         self, checkout_system, skus, expected
     ):
         assert checkout_system.calculate_price(skus) == expected
+
 
 
 
