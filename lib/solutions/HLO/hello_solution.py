@@ -1,4 +1,3 @@
-
 # noinspection PyUnusedLocal
 # friend_name = unicode string
 def hello(param):
@@ -8,7 +7,9 @@ def hello(param):
     message = "Hello, World!"
     return message
 
+
 hello("world!")
+
 
 
 
