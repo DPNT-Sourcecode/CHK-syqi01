@@ -38,14 +38,15 @@ class Checkout:
 
         for sku, count in counts.items():
             if sku == "A":
-                # Apply 5-for-200 offer
-                total += (count // 5) * 200
-                remaining_A = count % 5
-                # Apply 3-for-130 offer if applicable
-                total += (remaining_A // 3) * 130
-                remaining_A %= 3
-                # Price remaining 'A's individually
-                total += remaining_A * self.prices["A"]
+                remaining_A = count
+                total += (remaining_A // 5) * 200  # Apply 5-for-200 offer first
+                remaining_A %= 5
+                if remaining_A >= 3:
+                    total += (
+                        130  # Apply 3-for-130 offer if 3 or more 'A's are remaining
+                    )
+                    remaining_A -= 3
+                total += remaining_A * 50  # Price remaining 'A's individually
             elif (
                 sku in self.offers
                 and "quantity" in self.offers[sku]
@@ -109,6 +110,11 @@ class Checkout:
                 )
 
         return f"{passed}/{len(test_cases)} tests passed."
+
+
+# Run the tests using the static method
+# test_results = Checkout.run_tests()
+# test_results
 
 
 # Run the tests using the static method
@@ -198,3 +204,4 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
