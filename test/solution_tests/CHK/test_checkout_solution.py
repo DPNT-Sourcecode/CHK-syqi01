@@ -19,6 +19,10 @@ from lib.solutions.CHK.checkout_solution import Checkout
 # Here's how the test cases can be updated to reflect these changes:
 
 
+import pytest
+from lib.solutions.CHK.checkout_solution import Checkout
+
+
 class TestCheckout:
     @pytest.fixture
     def checkout_system(self):
@@ -27,15 +31,18 @@ class TestCheckout:
     @pytest.mark.parametrize(
         "skus, expected",
         [
-            ("ABCD", 115),
-            ("AAAAA", 200),  # New offer for A
-            ("", 0),
-            ("AAAB", 160),
-            ("AB", 80),
-            ("EE", 80),  # New item E without offer
-            ("EEB", 80),  # New offer for E (2E get B free)
-            ("EEEEBB", 160),  # Applying E's offer twice
-            ("ABCDE", 195),  # All items, including new E
+            ("ABCD", 115),  # Standard pricing for all items
+            ("AAAAA", 200),  # 5A for 200 offer
+            ("AAAA", 180),  # 3A for 130 offer
+            ("", 0),  # Empty basket
+            ("AAAB", 160),  # Combining A and B offers
+            ("AB", 80),  # No special offers
+            ("EE", 80),  # 2E (80) without free B
+            ("EEB", 80),  # 2E (80) with free B
+            ("EEEEBB", 160),  # Applying 2E offer twice
+            ("ABCDE", 195),  # All items including E
+            ("AAAAABBBE", 370),  # Combined offers for A and B, plus E
+            ("EEBBBB", 150),  # 2E with free B and 2B for 45 twice
         ],
     )
     def test_calculate_price_with_valid_inputs(self, checkout_system, skus, expected):
@@ -44,9 +51,9 @@ class TestCheckout:
     @pytest.mark.parametrize(
         "skus, expected",
         [
-            (None, -1),
-            (123, -1),
-            (["A", "B"], -1),
+            (None, -1),  # Invalid type: None
+            (123, -1),  # Invalid type: Integer
+            (["A", "B"], -1),  # Invalid type: List
             ("EFG", -1),  # G is an invalid SKU
             ("A" * 1000, -1),  # Overly long strings, if treated as invalid
         ],
@@ -55,4 +62,5 @@ class TestCheckout:
         self, checkout_system, skus, expected
     ):
         assert checkout_system.calculate_price(skus) == expected
+
 
