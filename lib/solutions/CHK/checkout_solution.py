@@ -17,13 +17,15 @@ class Checkout:
             "A": {"quantity": 3, "price": 130},
             "B": {"quantity": 2, "price": 45},
         }
+        self.max_sku_length = 100  # Set a maximum acceptable length for SKU strings
 
     def calculate_price(self, skus):
-        # Return -1 for non-string inputs, empty string, or invalid SKU characters
+        # Check for non-string, empty string, invalid characters, or too long string
         if (
             not isinstance(skus, str)
             or not skus
             or any(sku not in self.prices for sku in skus)
+            or len(skus) > self.max_sku_length
         ):
             return -1
 
@@ -111,6 +113,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 

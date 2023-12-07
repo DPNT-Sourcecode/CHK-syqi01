@@ -3,6 +3,10 @@ import pytest
 from lib.solutions.CHK.checkout_solution import Checkout
 
 
+import pytest
+from lib.solutions.CHK.checkout_solution import Checkout
+
+
 class TestCheckout:
     @pytest.fixture
     def checkout_system(self):
@@ -26,7 +30,10 @@ class TestCheckout:
             ("", -1),  # Testing for empty string as well
         ],
     )
-    def test_calculate_price_with_breaking_inputs(checkout_system, skus, expected):
+    def test_calculate_price_with_breaking_inputs(
+        self, checkout_system, skus, expected
+    ):
         assert checkout_system.calculate_price(skus) == expected
+
 
 
