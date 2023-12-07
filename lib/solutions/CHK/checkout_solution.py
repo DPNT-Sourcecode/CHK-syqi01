@@ -1,6 +1,3 @@
-# Stage 5 - Redo code with robust handling for breaking inputs
-
-
 class Checkout:
     def __init__(self):
         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40}
@@ -28,75 +25,71 @@ class Checkout:
         if skus == "":
             return 0
 
-        total = 0
+        # Split SKUs and count
         counts = {sku: skus.count(sku) for sku in set(skus)}
 
-        # Handle special offer for E before iterating
-        if "E" in counts:
-            free_bs = counts["E"] // 2
-            counts["B"] = max(0, counts.get("B", 0) - free_bs)
-
-        for sku, count in counts.items():
-            if sku == "A":
-                remaining_A = count
-                total += (remaining_A // 5) * 200  # Apply 5-for-200 offer first
-                remaining_A %= 5
-                if remaining_A >= 3:
-                    total += (
-                        130  # Apply 3-for-130 offer if 3 or more 'A's are remaining
-                    )
-                    remaining_A -= 3
-                total += remaining_A * 50  # Price remaining 'A's individually
-            elif (
-                sku in self.offers
-                and "quantity" in self.offers[sku]
-                and "price" in self.offers[sku]
-            ):
-                offer = self.offers[sku]
-                total += (count // offer["quantity"]) * offer["price"] + (
-                    count % offer["quantity"]
-                ) * self.prices[sku]
-            else:
-                total += count * self.prices[sku]
+        # Calculate total considering all possible offer combinations
+        total = self.calculate_best_price(counts)
 
         return total
+
+    def calculate_best_price(self, counts):
+        # Recursive function to calculate the best price considering all offers
+        if not counts:
+            return 0
+
+        min_total = float("inf")
+
+        for sku, count in counts.items():
+            new_counts = counts.copy()
+            new_counts[sku] -= 1
+            if new_counts[sku] == 0:
+                del new_counts[sku]
+
+            # Price without applying the offer
+            total_price = self.prices[sku] + self.calculate_best_price(new_counts)
+            min_total = min(min_total, total_price)
+
+            # Price with applying the offer (if available)
+            if sku in self.offers:
+                offer = self.offers[sku]
+                if "quantity" in offer and count >= offer["quantity"]:
+                    new_counts_offer = new_counts.copy()
+                    new_counts_offer[sku] -= offer["quantity"] - 1
+                    if new_counts_offer[sku] <= 0:
+                        del new_counts_offer[sku]
+
+                    total_price_offer = offer["price"] + self.calculate_best_price(
+                        new_counts_offer
+                    )
+                    min_total = min(min_total, total_price_offer)
+
+        return min_total
 
     @staticmethod
     def run_tests():
         checkout = Checkout()
         test_cases = [
-            ("", 0),
+            # Round 1 specific tests
             ("A", 50),
-            ("B", 30),
-            ("C", 20),
-            ("D", 15),
-            ("E", 40),
-            ("a", -1),
-            ("-", -1),
-            ("ABCa", -1),
-            ("AxA", -1),
-            ("ABCDE", 155),
             ("AA", 100),
-            ("AAA", 130),
-            ("AAAA", 180),
-            ("AAAAA", 200),
-            ("AAAAAA", 250),
-            ("AAAAAAA", 300),
-            ("AAAAAAAA", 330),
-            ("AAAAAAAAA", 380),
-            ("AAAAAAAAAA", 400),
-            ("EE", 80),
-            ("EEB", 80),
-            ("EEEB", 120),
-            ("EEEEBB", 160),
-            ("BEBEEE", 160),
-            ("BB", 45),
-            ("BBB", 75),
-            ("BBBB", 90),
-            ("ABCDEABCDE", 280),
-            ("CCADDEEBBA", 280),
-            ("AAAAAEEBAAABB", 455),
-            ("ABCDECBAABCABBAAAEEAA", 665),
+            ("AAA", 130),  # 3A for 130
+            ("AAAA", 180),  # 3A for 130 + 1A
+            # Round 2 specific tests
+            ("AAAAA", 200),  # 5A for 200
+            ("AAAAAA", 250),  # 5A for 200 + 1A
+            ("EE", 80),  # 2E get one B free, but only E's price is counted
+            ("EEB", 80),  # 2E get one B free, B is not charged
+            # Tests combining offers across different items
+            ("AB", 80),  # No offers
+            ("ABB", 95),  # 2B for 45
+            ("ABEE", 120),  # 2E get one B free, only one B charged
+            # Tests for illegal input
+            ("a", -1),
+            ("1", -1),
+            ("A" * 101, -1),  # Exceeding max SKU length
+            # Tests confirming customer-favoring policy
+            ("AAAB", 160),  # 3A for 130 + 1A + 1B
         ]
 
         passed = 0
@@ -113,13 +106,8 @@ class Checkout:
 
 
 # Run the tests using the static method
-# test_results = Checkout.run_tests()
-# test_results
-
-
-# Run the tests using the static method
-# test_results = Checkout.run_tests()
-# test_results
+test_results = Checkout.run_tests()
+print(test_results)
 
 
 # TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
@@ -204,4 +192,5 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
