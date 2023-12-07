@@ -7,81 +7,111 @@ class Checkout:
         self.offers = {
             "A": {"quantity": 3, "price": 130},
             "B": {"quantity": 2, "price": 45},
-            "E": {"quantity": 2, "free_item": "B"},  # Special offer for E
+            "E": {"quantity": 2, "free_item": "B"},
         }
-        self.max_sku_length = 100  # Set a maximum acceptable length for SKU strings
+        self.max_sku_length = 100
 
     def validate_skus(self, skus):
-        # More robust validation of skus
         if not isinstance(skus, str) or len(skus) > self.max_sku_length:
             return False
-
         if any(sku not in self.prices for sku in skus):
             return False
-
+        if (
+            not skus.isupper() and skus != ""
+        ):  # Ensure all characters are uppercase or it's an empty string
+            return False
         return True
 
     def calculate_price(self, skus):
-        # Check for non-string, empty string, invalid characters, or too long string
         if not self.validate_skus(skus):
             return -1
-
         if skus == "":
             return 0
 
         total = 0
         counts = {sku: skus.count(sku) for sku in set(skus)}
 
-        # Handle special offer for E
+        # Handle special offer for E before iterating
         if "E" in counts:
             free_bs = counts["E"] // 2
             counts["B"] = max(0, counts.get("B", 0) - free_bs)
 
         for sku, count in counts.items():
-            if sku in self.offers:
+            if sku == "A":
+                total += (
+                    (count // 5) * 200
+                    + ((count % 5) // 3) * 130
+                    + ((count % 5) % 3) * self.prices[sku]
+                )
+            elif (
+                sku in self.offers
+                and "quantity" in self.offers[sku]
+                and "price" in self.offers[sku]
+            ):
                 offer = self.offers[sku]
-                if (
-                    "quantity" in offer and "price" in offer
-                ):  # Standard quantity-price offer
-                    total += (count // offer["quantity"]) * offer["price"] + (
-                        count % offer["quantity"]
-                    ) * self.prices[sku]
-                elif "free_item" in offer:  # Special free item offer (like for E)
-                    total += count * self.prices[sku]
+                total += (count // offer["quantity"]) * offer["price"] + (
+                    count % offer["quantity"]
+                ) * self.prices[sku]
             else:
-                total += count * self.prices.get(sku, 0)
+                total += count * self.prices[sku]
 
         return total
 
-    def run_tests(self):
-        print("\nTesting valid inputs")
-        tests = [
-            ("ABCD", 115),
-            ("AAAA", 180),
+    @staticmethod
+    def run_tests():
+        checkout = Checkout()
+        test_cases = [
             ("", 0),
-            ("AAAB", 160),
-            ("AB", 80),
-            ("EE", 80),  # Testing new offer for E
-            ("EEB", 80),  # 2E get one B free
+            ("A", 50),
+            ("B", 30),
+            ("C", 20),
+            ("D", 15),
+            ("E", 40),
+            ("a", -1),
+            ("-", -1),
+            ("ABCa", -1),
+            ("AxA", -1),
+            ("ABCDE", 155),
+            ("AA", 100),
+            ("AAA", 130),
+            ("AAAA", 180),
+            ("AAAAA", 200),
+            ("AAAAAA", 250),
+            ("AAAAAAA", 300),
+            ("AAAAAAAA", 330),
+            ("AAAAAAAAA", 380),
+            ("AAAAAAAAAA", 400),
+            ("EE", 80),
+            ("EEB", 80),
+            ("EEEB", 120),
+            ("EEEEBB", 160),
+            ("BEBEEE", 160),
+            ("BB", 45),
+            ("BBB", 75),
+            ("BBBB", 90),
+            ("ABCDEABCDE", 280),
+            ("CCADDEEBBA", 280),
+            ("AAAAAEEBAAABB", 455),
+            ("ABCDECBAABCABBAAAEEAA", 665),
         ]
-        for test in tests:
-            result = self.calculate_price(test[0])
-            print(
-                f"Testing function: {test[0]}: {result} ... {'PASSED' if result == test[1] else 'FAILED'}"
-            )
 
-        print("\nTesting breaking inputs")
-        breaking_tests = [None, 123, ["A", "B"], "EFG", "A" * 101]
-        for test in breaking_tests:
-            result = self.calculate_price(test)
-            print(
-                f"Testing function with {test}: {result} ... {'PASSED' if result == -1 else 'FAILED'}"
-            )
+        passed = 0
+        for skus, expected in test_cases:
+            result = checkout.calculate_price(skus)
+            if result == expected:
+                passed += 1
+            else:
+                print(
+                    f"Test failed for input '{skus}': Expected {expected}, got {result}"
+                )
+
+        return f"{passed}/{len(test_cases)} tests passed."
 
 
-# Instantiate Checkout class and run tests
-# checkout_system = Checkout()
-# checkout_system.run_tests()
+# Run the tests using the static method
+# test_results = Checkout.run_tests()
+# test_results
+
 
 # TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
 # TODO 2: Refactor the calculate_price method to reduce its complexity and improve readability.
@@ -165,3 +195,4 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
