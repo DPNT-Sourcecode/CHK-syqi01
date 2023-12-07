@@ -45,25 +45,6 @@ class Checkout:
                 total += count * self.prices.get(sku, 0)
         return total
 
-    def run_tests(self):
-        # Testing with valid inputs
-        print("\nTesting valid inputs")
-        tests = [("ABCD", 115), ("AAAA", 180), ("", 0), ("AAAB", 160), ("AB", 80)]
-        for test in tests:
-            result = self.calculate_price(test[0])
-            print(
-                f"Testing function: {test[0]}: {result} ... {'PASSED' if result == test[1] else 'FAILED'}"
-            )
-
-        # Testing with breaking inputs
-        print("\nTesting breaking inputs")
-        breaking_tests = [None, 123, ["A", "B"], "EFG", "A" * 1000]
-        for test in breaking_tests:
-            result = self.calculate_price(test)
-            print(
-                f"Testing function with {test}: {result} ... {'PASSED' if result == -1 else 'FAILED'}"
-            )
-
 
 # Example usage:
 # checkout_system = Checkout()
@@ -156,4 +137,5 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
