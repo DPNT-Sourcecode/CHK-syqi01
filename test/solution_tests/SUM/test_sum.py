@@ -55,5 +55,3 @@ class TestCompute:
     def test_compute_error_cases(self, x, y, expected_exception):
         with pytest.raises(expected_exception):
             compute(x, y)
-
-
