@@ -21,10 +21,14 @@ class Checkout:
 
     def calculate_price(self, skus):
         # Check for non-string, empty string, invalid characters, or too long string
+        if not isinstance(skus, str):
+            return -1
+
+        if skus == "":
+            return 0
+
         if (
-            not isinstance(skus, str)
-            or not skus
-            or any(sku not in self.prices for sku in skus)
+            any(sku not in self.prices for sku in skus)
             or len(skus) > self.max_sku_length
         ):
             return -1
@@ -38,7 +42,7 @@ class Checkout:
                     count % offer["quantity"]
                 ) * self.prices[sku]
             else:
-                total += count * self.prices[sku]
+                total += count * self.prices.get(sku, 0)
         return total
 
     def run_tests(self):
@@ -61,9 +65,14 @@ class Checkout:
             )
 
 
+# Example usage:
+# checkout_system = Checkout()
+# checkout_system.run_tests()
+
+
 # Instantiate Checkout class and run tests
-checkout_system = Checkout()
-checkout_system.run_tests()
+# checkout_system = Checkout()
+# checkout_system.run_tests()
 
 # TODO 1. Breaking inputs not handled robustly: consider more thorough input validation.
 # TODO 2. Refactor: this code could be shorter and more modular using list comprehensions.
@@ -80,7 +89,8 @@ checkout_system.run_tests()
 # noinspection PyUnusedLocal
 # skus = unicode string
 def checkout(skus):
-    raise NotImplementedError()
+    checkout_system = Checkout()
+    return checkout_system.calculate_price(skus)
 
 
 # CHK_R1
@@ -113,7 +123,3 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
-
-
-
-

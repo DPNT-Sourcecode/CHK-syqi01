@@ -35,9 +35,3 @@ class TestCheckout:
         self, checkout_system, skus, expected
     ):
         assert checkout_system.calculate_price(skus) == expected
-
-
-
-
-
-
