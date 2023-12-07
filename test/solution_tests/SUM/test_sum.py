@@ -8,7 +8,6 @@ class TestSum:
     def test_sum(self):
         assert compute(1, 2) == 3
 
-    # Happy path tests with various realistic test values
     @pytest.mark.parametrize(
         "x, y, expected",
         [
@@ -21,6 +20,7 @@ class TestSum:
         ids=str,
     )
     def test_compute_happy_path(x, y, expected):
+        # Happy path tests with various realistic test values
         # Act
         result = compute(x, y)
 
@@ -60,3 +60,4 @@ class TestSum:
         # Act & Assert
         with pytest.raises(expected_exception):
             compute(x, y)
+
