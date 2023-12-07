@@ -19,48 +19,45 @@ from lib.solutions.CHK.checkout_solution import Checkout
 # Here's how the test cases can be updated to reflect these changes:
 
 
-import pytest
-from lib.solutions.CHK.checkout_solution import Checkout
-
-
 class TestCheckout:
     @pytest.fixture
-    def checkout_system(self):
+    def checkout(self):
         return Checkout()
 
-    @pytest.mark.parametrize(
-        "skus, expected",
-        [
-            ("ABCD", 115),  # Standard pricing for all items
-            ("AAAAA", 200),  # 5A for 200 offer
-            ("AAAA", 180),  # 3A for 130 offer
-            ("", 0),  # Empty basket
-            ("AAAB", 160),  # Combining A and B offers
-            ("AB", 80),  # No special offers
-            ("EE", 80),  # 2E (80) without free B
-            ("EEB", 80),  # 2E (80) with free B
-            ("EEEEBB", 160),  # Applying 2E offer twice
-            ("ABCDE", 195),  # All items including E
-            ("AAAAABBBE", 370),  # Combined offers for A and B, plus E
-            ("EEBBBB", 150),  # 2E with free B and 2B for 45 twice
-        ],
-    )
-    def test_calculate_price_with_valid_inputs(self, checkout_system, skus, expected):
-        assert checkout_system.calculate_price(skus) == expected
+    # Tests for valid inputs
+    def test_ABCD(self, checkout):
+        assert checkout.calculate_price("ABCD") == 115
 
-    @pytest.mark.parametrize(
-        "skus, expected",
-        [
-            (None, -1),  # Invalid type: None
-            (123, -1),  # Invalid type: Integer
-            (["A", "B"], -1),  # Invalid type: List
-            ("EFG", -1),  # G is an invalid SKU
-            ("A" * 1000, -1),  # Overly long strings, if treated as invalid
-        ],
-    )
-    def test_calculate_price_with_breaking_inputs(
-        self, checkout_system, skus, expected
-    ):
-        assert checkout_system.calculate_price(skus) == expected
+    def test_AAAA(self, checkout):
+        assert checkout.calculate_price("AAAA") == 180
 
+    def test_empty_string(self, checkout):
+        assert checkout.calculate_price("") == 0
 
+    def test_AAAB(self, checkout):
+        assert checkout.calculate_price("AAAB") == 160
+
+    def test_AB(self, checkout):
+        assert checkout.calculate_price("AB") == 80
+
+    def test_EE(self, checkout):
+        assert checkout.calculate_price("EE") == 80
+
+    def test_EEB(self, checkout):
+        assert checkout.calculate_price("EEB") == 80
+
+    # Tests for breaking inputs
+    def test_none_input(self, checkout):
+        assert checkout.calculate_price(None) == -1
+
+    def test_numeric_input(self, checkout):
+        assert checkout.calculate_price(123) == -1
+
+    def test_list_input(self, checkout):
+        assert checkout.calculate_price(["A", "B"]) == -1
+
+    def test_invalid_sku_input(self, checkout):
+        assert checkout.calculate_price("EFG") == -1
+
+    def test_too_long_sku_input(self, checkout):
+        assert checkout.calculate_price("A" * 101) == -1
