@@ -80,4 +80,3 @@ class TestCheckout:
     )
     def test_checkout(self, checkout, input_string, expected_output):
         assert checkout.calculate_price(input_string) == expected_output
-
