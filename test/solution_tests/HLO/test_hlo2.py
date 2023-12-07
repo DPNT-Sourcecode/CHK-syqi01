@@ -2,14 +2,22 @@ import pytest
 from lib.solutions.HLO.hello_solution import hello
 
 
+# Pytest class
 class TestHello:
-    def test_hello(self):
-        # Test with a sample name
-        assert hello("John") == "Hello, John!", "The greeting was not correct"
+    @pytest.mark.parametrize(
+        "friend_name, expected",
+        [
+            pytest.param("Alice", "Hello, Alice!", id="happy_path_alice"),
+            pytest.param("Bob", "Hello, Bob!", id="happy_path_bob"),
+            pytest.param("Charlie", "Hello, Charlie!", id="happy_path_charlie"),
+        ],
+    )
+    def test_hello_happy_path(self, friend_name, expected):
+        # Act
+        result = hello(friend_name)
 
-        # You can add more tests with different names here
-        assert hello("Alex") == "Hello, Alex!", "The greeting was not correct"
-        assert hello("Sarah") == "Hello, Sarah!", "The greeting was not correct"
+        # Assert
+        assert result == expected
 
 
 # Happy path tests with various realistic test values
@@ -60,3 +68,4 @@ def test_hello_edge_cases(friend_name, expected):
 #     # Act and Assert
 #     with pytest.raises(TypeError):
 #         hello(friend_name)
+
