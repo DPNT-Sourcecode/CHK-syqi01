@@ -7,7 +7,7 @@ class TestSum:
 
 
 import pytest
-from solutions.SUM.sum_solution import compute
+from lib.solutions.SUM.sum_solution import compute
 
 
 # Happy path tests with various realistic test values
@@ -64,4 +64,5 @@ def test_compute_error_cases(x, y, expected_exception):
     # Act & Assert
     with pytest.raises(expected_exception):
         compute(x, y)
+
 
