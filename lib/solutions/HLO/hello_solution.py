@@ -9,7 +9,3 @@ def hello(param):
 
 
 hello("world!")
-
-
-
-
