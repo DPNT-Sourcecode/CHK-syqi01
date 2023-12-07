@@ -12,7 +12,6 @@
 
 class Checkout:
     def __init__(self):
-        # Prices and offers could also be loaded from a DataFrame for more complex scenarios
         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15}
         self.offers = {
             "A": {"quantity": 3, "price": 130},
@@ -24,10 +23,16 @@ class Checkout:
         return sku in "ABCD"
 
     def calculate_price(self, skus):
+        # Return -1 for non-string inputs
         if not isinstance(skus, str):
             return -1
+
+        # Return -1 for empty string or invalid SKU characters
+        if not skus or any(sku not in self.prices for sku in skus):
+            return -1
+
         total = 0
-        counts = {sku: skus.count(sku) for sku in set(skus) if self.is_valid_sku(sku)}
+        counts = {sku: skus.count(sku) for sku in set(skus)}
         for sku, count in counts.items():
             if sku in self.offers:
                 offer = self.offers[sku]
@@ -110,4 +115,5 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
