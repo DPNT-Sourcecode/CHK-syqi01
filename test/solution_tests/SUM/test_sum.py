@@ -8,6 +8,9 @@ class TestSum:
     def test_sum(self):
         assert compute(1, 2) == 3
 
+
+class TestCompute:
+    # Happy path tests with various realistic test values
     @pytest.mark.parametrize(
         "x, y, expected",
         [
@@ -19,12 +22,8 @@ class TestSum:
         ],
         ids=str,
     )
-    def test_compute_happy_path(x, y, expected):
-        # Happy path tests with various realistic test values
-        # Act
+    def test_compute_happy_path(self, x, y, expected):
         result = compute(x, y)
-
-        # Assert
         assert result == expected, f"Expected {expected}, got {result}"
 
     # Edge cases
@@ -38,11 +37,8 @@ class TestSum:
         ],
         ids=str,
     )
-    def test_compute_edge_cases(x, y, expected):
-        # Act
+    def test_compute_edge_cases(self, x, y, expected):
         result = compute(x, y)
-
-        # Assert
         assert result == expected, f"Expected {expected}, got {result}"
 
     # Error cases
@@ -56,8 +52,8 @@ class TestSum:
         ],
         ids=str,
     )
-    def test_compute_error_cases(x, y, expected_exception):
-        # Act & Assert
+    def test_compute_error_cases(self, x, y, expected_exception):
         with pytest.raises(expected_exception):
             compute(x, y)
+
 
