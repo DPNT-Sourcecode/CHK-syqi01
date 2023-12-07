@@ -1,6 +1,0 @@
-[flake8]
-; max-line-length = 88
-; E501 = ignore line length errors
-; W503 = ignore line breaks before binary operators to align with Black's style.
-ignore = E501, W503
-exclude = venv, .venv, env, .env, __pycache__, *.swp, *~, tests, docs, build, dist, migrations, .git, static, media
