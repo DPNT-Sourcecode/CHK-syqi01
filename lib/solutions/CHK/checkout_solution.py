@@ -18,17 +18,13 @@ class Checkout:
             "B": {"quantity": 2, "price": 45},
         }
 
-    @staticmethod
-    def is_valid_sku(sku):
-        return sku in "ABCD"
-
     def calculate_price(self, skus):
-        # Return -1 for non-string inputs
-        if not isinstance(skus, str):
-            return -1
-
-        # Return -1 for empty string or invalid SKU characters
-        if not skus or any(sku not in self.prices for sku in skus):
+        # Return -1 for non-string inputs, empty string, or invalid SKU characters
+        if (
+            not isinstance(skus, str)
+            or not skus
+            or any(sku not in self.prices for sku in skus)
+        ):
             return -1
 
         total = 0
@@ -40,7 +36,7 @@ class Checkout:
                     count % offer["quantity"]
                 ) * self.prices[sku]
             else:
-                total += count * self.prices.get(sku, 0)
+                total += count * self.prices[sku]
         return total
 
     def run_tests(self):
@@ -115,5 +111,6 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
