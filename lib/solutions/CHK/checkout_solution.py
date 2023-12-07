@@ -1,26 +1,14 @@
-# Stage 4 - Define likely breaking inputs
-
-# Breaking inputs to consider:
-# 1. None or empty input.
-# 2. Incorrect object types (e.g., numbers, lists instead of strings).
-# 3. Strings containing invalid characters (not A, B, C, D).
-# 4. Very long strings (performance testing).
-
-# Let's proceed to Stage 4.2 - Writing the first pass of the code with basic tests.
-# Note: As requested, we're using Python built-in libraries only.
-
-
 class Checkout:
     def __init__(self):
-        self.prices = {"A": 50, "B": 30, "C": 20, "D": 15}
+        self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40}
         self.offers = {
-            "A": {"quantity": 3, "price": 130},
+            "A": [("quantity", 5, "price", 200), ("quantity", 3, "price", 130)],
             "B": {"quantity": 2, "price": 45},
+            "E": {"quantity": 2, "get_free": "B"},
         }
-        self.max_sku_length = 100  # Set a maximum acceptable length for SKU strings
+        self.max_sku_length = 100
 
     def calculate_price(self, skus):
-        # Check for non-string, empty string, invalid characters, or too long string
         if not isinstance(skus, str):
             return -1
 
@@ -35,25 +23,55 @@ class Checkout:
 
         total = 0
         counts = {sku: skus.count(sku) for sku in set(skus)}
+
+        # Handle special offers for E
+        if "E" in counts and counts["E"] >= 2 and "B" in counts:
+            free_bs = counts["E"] // 2
+            counts["B"] = max(0, counts["B"] - free_bs)
+
+        # Handle other offers
         for sku, count in counts.items():
             if sku in self.offers:
-                offer = self.offers[sku]
-                total += (count // offer["quantity"]) * offer["price"] + (
-                    count % offer["quantity"]
-                ) * self.prices[sku]
-            else:
-                total += count * self.prices.get(sku, 0)
+                for offer in sorted(
+                    self.offers[sku], key=lambda x: x["quantity"], reverse=True
+                ):
+                    if "get_free" not in offer:
+                        total += (count // offer["quantity"]) * offer["price"]
+                        count %= offer["quantity"]
+            total += count * self.prices.get(sku, 0)
+
         return total
+
+    def run_tests(self):
+        print("\nTesting valid inputs")
+        tests = [
+            ("ABCD", 115),
+            ("AAAA", 180),
+            ("", 0),
+            ("AAAB", 160),
+            ("AB", 80),
+            ("EEB", 80),
+            ("EEEEBB", 160),
+        ]
+        for test in tests:
+            result = self.calculate_price(test[0])
+            print(
+                f"Testing function: {test[0]}: {result} ... {'PASSED' if result == test[1] else 'FAILED'}"
+            )
+
+        print("\nTesting breaking inputs")
+        breaking_tests = [None, 123, ["A", "B"], "EFG", "A" * 1000]
+        for test in breaking_tests:
+            result = self.calculate_price(test)
+            print(
+                f"Testing function with {test}: {result} ... {'PASSED' if result == -1 else 'FAILED'}"
+            )
 
 
 # Example usage:
 # checkout_system = Checkout()
 # checkout_system.run_tests()
 
-
-# Instantiate Checkout class and run tests
-# checkout_system = Checkout()
-# checkout_system.run_tests()
 
 # TODO 1. Breaking inputs not handled robustly: consider more thorough input validation.
 # TODO 2. Refactor: this code could be shorter and more modular using list comprehensions.
@@ -137,5 +155,6 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
