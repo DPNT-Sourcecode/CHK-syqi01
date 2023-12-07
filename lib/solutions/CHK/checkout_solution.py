@@ -2,29 +2,26 @@ class Checkout:
     def __init__(self):
         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40}
         self.offers = {
-            "A": [("quantity", 5, "price", 200), ("quantity", 3, "price", 130)],
-            "B": {"quantity": 2, "price": 45},
-            "E": {"quantity": 2, "get_free": "B"},
+            "A": [{"quantity": 5, "price": 200}, {"quantity": 3, "price": 130}],
+            "B": [{"quantity": 2, "price": 45}],
+            "E": [{"quantity": 2, "get_free": "B"}],
         }
         self.max_sku_length = 100
 
     def calculate_price(self, skus):
-        if not isinstance(skus, str):
+        if not isinstance(skus, str) or any(sku not in self.prices for sku in skus):
             return -1
 
         if skus == "":
             return 0
 
-        if (
-            any(sku not in self.prices for sku in skus)
-            or len(skus) > self.max_sku_length
-        ):
+        if len(skus) > self.max_sku_length:
             return -1
 
         total = 0
         counts = {sku: skus.count(sku) for sku in set(skus)}
 
-        # Handle special offers for E
+        # Handle special offer for E (2E get one B free)
         if "E" in counts and counts["E"] >= 2 and "B" in counts:
             free_bs = counts["E"] // 2
             counts["B"] = max(0, counts["B"] - free_bs)
@@ -33,25 +30,28 @@ class Checkout:
         for sku, count in counts.items():
             if sku in self.offers:
                 for offer in sorted(
-                    self.offers[sku], key=lambda x: x["quantity"], reverse=True
+                    self.offers[sku], key=lambda x: x.get("quantity", 0), reverse=True
                 ):
                     if "get_free" not in offer:
-                        total += (count // offer["quantity"]) * offer["price"]
+                        total += (count // offer["quantity"]) * offer.get("price", 0)
                         count %= offer["quantity"]
             total += count * self.prices.get(sku, 0)
 
         return total
 
     def run_tests(self):
+        # Testing with valid inputs
         print("\nTesting valid inputs")
         tests = [
             ("ABCD", 115),
-            ("AAAA", 180),
+            ("AAAAA", 200),
             ("", 0),
             ("AAAB", 160),
             ("AB", 80),
+            ("EE", 80),
             ("EEB", 80),
             ("EEEEBB", 160),
+            ("ABCDE", 195),
         ]
         for test in tests:
             result = self.calculate_price(test[0])
@@ -59,6 +59,7 @@ class Checkout:
                 f"Testing function: {test[0]}: {result} ... {'PASSED' if result == test[1] else 'FAILED'}"
             )
 
+        # Testing with breaking inputs
         print("\nTesting breaking inputs")
         breaking_tests = [None, 123, ["A", "B"], "EFG", "A" * 1000]
         for test in breaking_tests:
@@ -155,6 +156,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
