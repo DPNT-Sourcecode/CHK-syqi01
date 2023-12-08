@@ -15,13 +15,9 @@ class Checkout:
             return False
         if any(sku not in self.prices for sku in skus):
             return False
-        if (
-            not skus.isupper() and skus != ""
-        ):  # Ensure all characters are uppercase or it's an empty string
-            return False
-        return True
+        return bool(skus.isupper() or skus == "")
 
-        def calculate_price(self, skus):
+    def calculate_price(self, skus):
         if not self.validate_skus(skus):
             return -1
         if skus == "":
@@ -31,11 +27,11 @@ class Checkout:
         counts = {sku: skus.count(sku) for sku in set(skus)}
 
         # First handle the price for E and adjust B's count
-        if 'E' in counts:
-            total += self.calculate_price_for_e(counts['E'], counts)
+        if "E" in counts:
+            total += self.calculate_price_for_e(counts["E"], counts)
 
         for sku, count in counts.items():
-            if sku != 'E':  # E has already been handled
+            if sku != "E":  # E has already been handled
                 total += self.calculate_price_for_sku(sku, count, counts)
 
         return total
@@ -45,7 +41,7 @@ class Checkout:
             return self.calculate_price_for_a(count)
         elif sku == "B":
             # Adjust B count if E's offer has been applied
-            adjusted_count = max(0, count - (counts.get('E', 0) // 2))
+            adjusted_count = max(0, count - (counts.get("E", 0) // 2))
             return self.calculate_price_for_b(adjusted_count)
         elif sku == "C":
             return count * self.prices[sku]
@@ -141,7 +137,7 @@ class Checkout:
 
         passed = 0
         for skus, expected in test_cases:
-            result = checkout.calculate_price_for_sku(skus)
+            result = checkout.calculate_price(skus)
             if result == expected:
                 passed += 1
             else:
@@ -282,5 +278,6 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
