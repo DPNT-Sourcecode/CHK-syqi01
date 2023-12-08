@@ -1,10 +1,12 @@
 class Checkout:
     def __init__(self):
-        self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40}
+        self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10}
         self.offers = {
             "A": {"quantity": 3, "price": 130},
             "B": {"quantity": 2, "price": 45},
             "E": {"quantity": 2, "free_item": "B"},
+            # Adding logic for F as per the new requirements
+            "F": {"quantity": 3, "price": 20},  # 3 for the price of 2
         }
         self.max_sku_length = 100
 
@@ -40,15 +42,14 @@ class Checkout:
                     + ((count % 5) // 3) * 130
                     + ((count % 5) % 3) * self.prices[sku]
                 )
-            elif (
-                sku in self.offers
-                and "quantity" in self.offers[sku]
-                and "price" in self.offers[sku]
-            ):
+            elif sku in self.offers and "quantity" in self.offers[sku]:
                 offer = self.offers[sku]
-                total += (count // offer["quantity"]) * offer["price"] + (
-                    count % offer["quantity"]
-                ) * self.prices[sku]
+                if "price" in offer:  # Regular multi-buy offers
+                    total += (count // offer["quantity"]) * offer["price"] + (
+                        count % offer["quantity"]
+                    ) * self.prices[sku]
+                elif "free_item" in offer:  # Offers that give a free item
+                    total += count * self.prices[sku]
             else:
                 total += count * self.prices[sku]
 
@@ -90,6 +91,13 @@ class Checkout:
             ("CCADDEEBBA", 280),
             ("AAAAAEEBAAABB", 455),
             ("ABCDECBAABCABBAAAEEAA", 665),
+            ("F", 10),  # Single F
+            ("FF", 20),  # Two Fs
+            ("FFF", 20),  # Three Fs (one should be free)
+            ("FFFF", 30),  # Four Fs
+            ("FFFFFF", 40),  # Six Fs (two free)
+            ("FFFFFFF", 50),  # Seven Fs
+            ("FXF", -1),  # Illegal input
         ]
 
         passed = 0
@@ -105,9 +113,9 @@ class Checkout:
         return f"{passed}/{len(test_cases)} tests passed."
 
 
-# checkout_test = Checkout()
-# test_results = checkout_test.run_tests()
-# print(test_results)
+checkout_test = Checkout()
+test_results = checkout_test.run_tests()
+print(test_results)
 
 # TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
 # TODO 2: Refactor the calculate_price method to reduce its complexity and improve readability.
@@ -191,4 +199,37 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
+# CHK_R3
+# ROUND 3 - More items and offers
+# A new item has arrived. Item F.
+# Our marketing team wants to try rewording the offer to see if it affects consumption
+# Instead of multi-pricing this item they want to say "buy 2Fs and get another F free"
+# The offer requires you to have 3 Fs in the basket.
+
+# Our price table and offers:
+# +------+-------+------------------------+
+# | Item | Price | Special offers         |
+# +------+-------+------------------------+
+# | A    | 50    | 3A for 130, 5A for 200 |
+# | B    | 30    | 2B for 45              |
+# | C    | 20    |                        |
+# | D    | 15    |                        |
+# | E    | 40    | 2E get one B free      |
+# | F    | 10    | 2F get one F free      |
+# +------+-------+------------------------+
+
+
+# Notes:
+#  - The policy of the supermarket is to always favor the customer when applying special offers.
+#  - All the offers are well balanced so that they can be safely combined.
+#  - For any illegal input return -1
+
+# In order to complete the round you need to implement the following method:
+#      checkout(String) -> Integer
+
+# Where:
+#  - param[0] = a String containing the SKUs of all the products in the basket
+#  - @return = an Integer representing the total checkout value of the items
+
 
