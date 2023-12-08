@@ -5,7 +5,7 @@ class Checkout:
             "A": {"quantity": 3, "price": 130},
             "B": {"quantity": 2, "price": 45},
             "E": {"quantity": 2, "free_item": "B"},
-            # Adding logic for F as per the new requirements
+            # Including offer for F
             "F": {"quantity": 3, "price": 20},  # 3 for the price of 2
         }
         self.max_sku_length = 100
@@ -50,6 +50,9 @@ class Checkout:
                     ) * self.prices[sku]
                 elif "free_item" in offer:  # Offers that give a free item
                     total += count * self.prices[sku]
+            elif sku == "F":  # Special handling for F
+                # Apply the offer: buy 2 Fs get one F free
+                total += ((count // 3) * 2 + (count % 3)) * self.prices["F"]
             else:
                 total += count * self.prices[sku]
 
@@ -129,6 +132,18 @@ class Checkout:
 
         return f"{passed}/{len(test_cases)} tests passed."
 
+
+# Our price table and offers:
+# +------+-------+------------------------+
+# | Item | Price | Special offers         |
+# +------+-------+------------------------+
+# | A    | 50    | 3A for 130, 5A for 200 |
+# | B    | 30    | 2B for 45              |
+# | C    | 20    |                        |
+# | D    | 15    |                        |
+# | E    | 40    | 2E get one B free      |
+# | F    | 10    | 2F get one F free      |
+# +------+-------+------------------------+
 
 checkout_test = Checkout()
 test_results = checkout_test.run_tests()
@@ -248,3 +263,4 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
