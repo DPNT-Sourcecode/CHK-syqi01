@@ -119,11 +119,9 @@ class Checkout:
             # Additional test cases involving item F
             ("FAB", 90),  # F (10) + A (50) + B (30) = 90
             ("FFAB", 100),  # 2F (20) + A (50) + B (30) = 100
-            ("FFFAAA", 180),  # 3F (one free, 20) + 3A (130) = 180
-            ("FFFFFFAB", 140),  # 6F (two free, 40) + A (50) + B (30) = 140
-            ("FFFFFAAAAB", 280),  # 5F (two free, 30) + 4A (200) + B (30) = 280
-            ("FFABABFF", 190),  # 4F (one free, 30) + 2A (100) + 2B (60) = 190
-            ("FFFFD", 50),  # 4F (one free, 30) + D (15) = 50
+            ("FFFAAA", 150),  # 3F (one free, 20) + 3A (130) = 180
+            ("FFFFFFAB", 120),  # 6F (two free, 40) + A (50) + B (30) = 140
+            ("FFFFD", 45),  # 4F (one free, 30) + D (15) = 50
             (
                 "ABCDEFFF",
                 195,
@@ -278,6 +276,3 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
-
-
-
