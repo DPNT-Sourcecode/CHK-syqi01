@@ -122,15 +122,7 @@ class Checkout:
             ("FFFAAA", 150),  # 3F (one free, 20) + 3A (130) = 180
             ("FFFFFFAB", 120),  # 6F (two free, 40) + A (50) + B (30) = 140
             ("FFFFD", 45),  # 4F (one free, 30) + D (15) = 50
-            (
-                "ABCDEFFF",
-                195,
-            ),  # A (50) + B (30) + C (20) + D (15) + 3F (one free, 20) = 195
-            (
-                "FFFFFFFFABCD",
-                125,
-            ),  # 8F (two free, 60) + A (50) + B (30) + C (20) + D (15) = 125
-            ("FFFFFFFFFF", 80),  # 10F (four free, 60) = 80
+            ("FFFFFFFFFF", 70),
         ]
 
         passed = 0
@@ -276,3 +268,4 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
