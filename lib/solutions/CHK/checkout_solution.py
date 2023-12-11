@@ -59,6 +59,47 @@ pricing_table_dict = parse_pricing_table(pricing_table_string)
 pprint(pricing_table_dict)
 
 
+# reformat pricing data to have special offers stored manageably
+
+
+def reformat_pricing_data(pricing_data):
+    # List to store the reformatted data
+    reformatted_data = []
+
+    # Iterate over the items in the dictionary
+    for item in pricing_data:
+        # Skip the header row
+        if item == "Item":
+            continue
+
+        # Get the price of the item
+        price = pricing_data[item]["Price"]
+
+        # Check if there's a special offer for the item
+        if pricing_data[item]["Special offers"]:
+            # Split multiple offers into separate entries
+            offers = pricing_data[item]["Special offers"].split(", ")
+            for offer in offers:
+                reformatted_data.append(
+                    {item: {"Price": price, "Special offers": offer}}
+                )
+        else:
+            # If there are no special offers, add the item with an empty offer field
+            reformatted_data.append({item: {"Price": price, "Special offers": ""}})
+
+    return reformatted_data
+
+
+# Reformat the pricing table dictionary
+reformatted_pricing_data = reformat_pricing_data(pricing_table_dict)
+print("\n\nreformatted pricing data to split out prices!")
+pprint(reformatted_pricing_data)
+print("\n\n")
+
+# Reformat the pricing table dictionary
+reformatted_pricing_data = reformat_pricing_data(pricing_table_dict)
+
+
 # class Checkout:
 #     def __init__(self):
 #         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10}
@@ -293,4 +334,5 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
