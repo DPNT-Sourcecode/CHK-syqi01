@@ -423,7 +423,12 @@ def calculate_savings(offers, item_prices):
     return offers
 
 
-special_offers_w_savings = calculate_savings(parsed_special_offers)
+# Script to create a dictionary of item prices
+item_prices = {
+    item: float(details["Price"]) for item, details in pricing_table_dict.items()
+}
+
+special_offers_w_savings = calculate_savings(parsed_special_offers, item_prices)
 pprint("\n\n special offers with savings")
 pprint(special_offers_w_savings)
 
@@ -687,6 +692,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
