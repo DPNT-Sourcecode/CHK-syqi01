@@ -467,7 +467,9 @@ sorted_cart = sort_cart(shopping_cart_str)
 # main function to calculate price
 # Adjusted function to handle sorted offers as a list of tuples
 # Correcting the logic for handling standard offers in apply_offers_to_cart_v3 function
+# Correcting the function call by adding the mock pricing table dictionary as an argument
 def apply_offers_to_cart_v2(cart, offers):
+    pricing_dict = pricing_table_dict
     # Validate the cart using simple regex
     if not cart:
         return 0
@@ -502,12 +504,7 @@ def apply_offers_to_cart_v2(cart, offers):
             # Handle standard offers
             offer_requirements = {}
             for item_detail in offer_details["input"]:
-                if "item" in item_detail:
-                    item_key = item_detail["item"]
-                else:
-                    # Assuming the first key in the dictionary is the item key
-                    item_key = next(iter(item_detail))
-
+                item_key = item_detail.get("item") or next(iter(item_detail))
                 count = item_detail["count"]
                 offer_requirements[item_key] = count
 
@@ -530,12 +527,15 @@ def apply_offers_to_cart_v2(cart, offers):
 
     # Calculate the price for items without offers
     for item in working_cart:
-        item_price = float(pricing_table_dict[item]["Price"])
+        item_price = float(pricing_dict[item]["Price"])
         total_price += item_price
+
     return total_price
 
 
-total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
+total_cart_price_v2 = apply_offers_to_cart_v2(
+    sorted_cart, sorted_offers, pricing_table_dict
+)
 print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
@@ -713,4 +713,5 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
