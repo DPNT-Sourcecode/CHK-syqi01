@@ -586,11 +586,15 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # noinspection PyUnusedLocal
 # skus = unicode string
 def checkout(skus):
-    return apply_offers_to_cart_v2(skus, sorted_offers)
+    sorted_cart = sort_cart(shopping_cart_str)
+    best_price = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
+    return best_price
 
 
-temp = checkout("AASDFASDFA")
-pprint(temp)
+# temp = checkout("AASDFASDFA")
+# pprint("FINAL CHECK")
+# pprint(temp)
+
 
 # CHK_R1
 # ROUND 1 - Our supermarket
@@ -687,5 +691,6 @@ pprint(temp)
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
