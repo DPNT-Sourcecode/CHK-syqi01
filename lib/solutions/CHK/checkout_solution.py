@@ -56,6 +56,7 @@ def parse_pricing_table(pricing_table):
 
 # Use the function
 pricing_table_dict = parse_pricing_table(pricing_table_string)
+print("\n\n basic parsing")
 pprint(pricing_table_dict)
 
 
@@ -98,6 +99,96 @@ print("\n\n")
 
 # Reformat the pricing table dictionary
 reformatted_pricing_data = reformat_pricing_data(pricing_table_dict)
+
+
+def parse_special_offers_final(data):
+    parsed_offers = {}
+
+    for item_data in data:
+        for item, details in item_data.items():
+            offer = details["Special offers"]
+            price = int(details["Price"])
+
+            # Handle offers
+            if offer:
+                if "for" in offer:
+                    # Offers like "3A for 130"
+                    parts = offer.split(" ")
+                    count = int(
+                        parts[0][0]
+                    )  # Assuming the count is the first character
+                    total_price = int(parts[2])
+                    input_count = count
+                    output_count = count
+                    input_t_price = float(price * input_count)
+                    output_t_price = float(total_price)
+                    input_price_calc = f"{price}*{input_count}"
+                    output_price_calc = str(total_price)
+
+                    parsed_offers[offer] = {
+                        "input": {
+                            item: {
+                                "count": input_count,
+                                "t_price": input_t_price,
+                                "price_calc": input_price_calc,
+                            }
+                        },
+                        "output": {
+                            item: {
+                                "count": output_count,
+                                "t_price": output_t_price,
+                                "price_calc": output_price_calc,
+                            }
+                        },
+                    }
+
+                elif "get one" in offer:
+                    # Offers like "2F get one F free"
+                    parts = offer.split(" ")
+                    count = int(
+                        parts[0][0]
+                    )  # Assuming the count is the first character
+                    input_count = count + 1
+                    output_count = input_count
+                    input_t_price = float(price * input_count)
+                    output_t_price = float(price * count)
+                    input_price_calc = f"{price}*{input_count}"
+                    output_price_calc = f"{price}*{count}"
+
+                    parsed_offers[offer] = {
+                        "input": {
+                            item: {
+                                "count": input_count,
+                                "t_price": input_t_price,
+                                "price_calc": input_price_calc,
+                            }
+                        },
+                        "output": {
+                            item: {
+                                "count": output_count,
+                                "t_price": output_t_price,
+                                "price_calc": output_price_calc,
+                            }
+                        },
+                    }
+
+            else:
+                # Default offer (no special offer)
+                parsed_offers[""] = {
+                    "input": {
+                        item: {"count": 1, "t_price": float(price), "price_calc": ""}
+                    },
+                    "output": {
+                        item: {"count": 1, "t_price": float(price), "price_calc": ""}
+                    },
+                }
+
+    return parsed_offers
+
+
+# Parse the special offers from the reformatted pricing data using the final format
+parsed_special_offers_final = parse_special_offers_final(reformatted_pricing_data)
+parsed_special_offers_final
 
 
 # class Checkout:
@@ -334,5 +425,6 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
