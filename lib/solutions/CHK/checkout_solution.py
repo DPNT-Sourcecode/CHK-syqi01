@@ -462,7 +462,8 @@ sorted_cart = sort_cart(shopping_cart_str)
 
 
 # main function to calculate price
-def apply_offers_to_cart_v2(cart, offers):
+# Adjusted function to handle sorted offers as a list of tuples
+def apply_offers_to_cart_v2(cart, sorted_offers):
     # Validate the cart using simple regex
     if cart == []:
         return 0
@@ -473,64 +474,58 @@ def apply_offers_to_cart_v2(cart, offers):
     working_cart = cart.copy()
     total_price = 0
 
-    for offer_name, offer_details in offers.items():
-        if offer_name:  # Skip the empty offer
-            if offer_details.get("type") == "cross-product":
-                # Handle cross-product offers
-                group_items = offer_details["input"][0]["items"]
-                required_count = offer_details["input"][0]["count"]
+    # Iterate over the sorted offers, which is a list of tuples (offer_name, offer_details)
+    for offer_name, offer_details in sorted_offers:
+        if offer_details.get("type") == "cross-product":
+            # Handle cross-product offers
+            group_items = offer_details["input"][0]["items"]
+            required_count = offer_details["input"][0]["count"]
+            actual_count = sum(working_cart.count(item) for item in group_items)
+
+            while actual_count >= required_count:
+                # Apply the offer
+                total_price += offer_details["output"][0]["t_price"]
+                # Remove the required count of items from the working cart
+                for _ in range(required_count):
+                    for item in group_items:
+                        if item in working_cart:
+                            working_cart.remove(item)
+                            break
+
+                # Re-calculate the actual count
                 actual_count = sum(working_cart.count(item) for item in group_items)
 
-                while actual_count >= required_count:
-                    # Apply the offer
-                    total_price += offer_details["output"][0]["t_price"]
-                    # Remove the required count of items from the working cart
-                    for _ in range(required_count):
-                        for item in group_items:
-                            if item in working_cart:
-                                working_cart.remove(item)
-                                break
+        else:
+            # Adjusted logic for standard offers
+            offer_requirements = {}
+            for item_details in offer_details["input"]:
+                item_key = item_details.get("item")
+                if item_key:
+                    count = item_details["count"]
+                    if item_key in offer_requirements:
+                        offer_requirements[item_key] += count
+                    else:
+                        offer_requirements[item_key] = count
 
-                    # Re-calculate the actual count
-                    actual_count = sum(working_cart.count(item) for item in group_items)
+            can_apply_offer = all(
+                working_cart.count(item) >= count
+                for item, count in offer_requirements.items()
+            )
 
-            else:
-                # Adjusted logic for standard offers
-                offer_requirements = {}
-                for item_details in offer_details["input"]:
-                    # Determine the item key (name)
-                    item_key = item_details.get("item")  # Safely get the 'item' key
-                    if item_key:
-                        count = item_details["count"]
-                        if item_key in offer_requirements:
-                            offer_requirements[item_key] += count
-                        else:
-                            offer_requirements[item_key] = count
+            while can_apply_offer:
+                for output_item in offer_details["output"]:
+                    total_price += output_item["t_price"]
+                for item, count in offer_requirements.items():
+                    for _ in range(count):
+                        working_cart.remove(item)
 
-                # Check if the offer can be applied
                 can_apply_offer = all(
                     working_cart.count(item) >= count
                     for item, count in offer_requirements.items()
                 )
 
-                while can_apply_offer:
-                    # Apply the offer
-                    for output_item in offer_details["output"]:
-                        total_price += output_item["t_price"]
-                    # Remove the used items from the working cart
-                    for item, count in offer_requirements.items():
-                        for _ in range(count):
-                            working_cart.remove(item)
-
-                    # Re-check if the offer can still be applied
-                    can_apply_offer = all(
-                        working_cart.count(item) >= count
-                        for item, count in offer_requirements.items()
-                    )
-
-    # Calculate the price for items without offers
     for item in working_cart:
-        item_price = float(mock_pricing_table_dict[item]["Price"])
+        item_price = float(mock_pricing_table_dict_cross_product[item]["Price"])
         total_price += item_price
 
     return total_price
@@ -714,6 +709,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
