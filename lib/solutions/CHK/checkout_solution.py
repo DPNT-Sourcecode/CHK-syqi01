@@ -186,7 +186,7 @@ def parse_special_offers(data):
 def parse_get_one_free_offer(item, price, offer, data):
     parts = offer.split(" ")
     primary_item_count = int(parts[0][0])  # Assuming the count is the first character
-    free_item = parts[4]  # Assuming the free item is the last word in the offer
+    free_item = parts[3]  # Assuming the free item is the last word in the offer
     free_item_price = 0
     for offer_data in data:
         if free_item in offer_data:
@@ -199,6 +199,11 @@ def parse_get_one_free_offer(item, price, offer, data):
 parsed_special_offers = parse_special_offers(reformatted_pricing_data)
 print("\n\n parse special offers into input / output format ready for processing")
 pprint(parsed_special_offers)
+
+# this is currently outputting mostly right but it's calling cross-item offers "free".
+# free_item = parts[4]  # Assuming the free item is the last word in the offer
+# it's not 4, that's also not ideal.
+# also chanigng structure so input/output can have duplicate entries.
 
 
 # class Checkout:
@@ -435,6 +440,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
