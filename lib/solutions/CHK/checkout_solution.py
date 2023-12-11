@@ -402,10 +402,22 @@ snapshot_1 = {
 
 
 # Function to calculate savings for each offer and add to the dict
-def calculate_savings(offers):
+def calculate_savings(offers, item_prices):
     for offer, details in offers.items():
-        input_total = sum(item["t_price"] for item in details["input"])
-        output_total = sum(item["t_price"] for item in details["output"])
+        if details.get("type") == "cross-product":
+            # For cross-product offers, calculate the input total based on the cheapest items
+            group_items = details["input"][0]["items"]
+            count = details["input"][0]["count"]
+            # Get the prices of the items in the group and sort them
+            group_item_prices = sorted([item_prices[item] for item in group_items])
+            # Sum the prices of the cheapest items up to the required count
+            input_total = sum(group_item_prices[:count])
+            output_total = details["output"][0]["t_price"]
+        else:
+            # For standard offers, calculate as before
+            input_total = sum(item["t_price"] for item in details["input"])
+            output_total = sum(item["t_price"] for item in details["output"])
+
         saving = input_total - output_total
         offers[offer]["saving"] = saving
     return offers
@@ -675,6 +687,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
