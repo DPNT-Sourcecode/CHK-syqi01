@@ -449,11 +449,11 @@ def checkout(skus):
     return best_price
 
 
-total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
+# total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-temp = checkout("AAA")
-pprint("FINAL CHECK")
-pprint(temp)
+# temp = checkout("AAAAA")
+# pprint("FINAL CHECK")
+# pprint(temp)
 
 
 test_cases = [
@@ -615,6 +615,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
