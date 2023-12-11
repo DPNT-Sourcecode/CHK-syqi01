@@ -28,9 +28,9 @@ pricing_table_string = """
 | U    | 40    | 3U get one U free               |
 | V    | 50    | 2V for 90, 3V for 130           |
 | W    | 20    |                                 |
-| X    | 17    | buy any 3 of (S,T,X,Y,Z) for 45 |
-| Y    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
-| Z    | 21    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| X    | 17    | buy any 3 of (S,T,X,Y,Z) fr 45 |
+| Y    | 20    | buy any 3 of (S,T,X,Y,Z) fr 45 |
+| Z    | 21    | buy any 3 of (S,T,X,Y,Z) fr 45 |
 +------+-------+---------------------------------+"""
 #
 # """
@@ -675,5 +675,6 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
