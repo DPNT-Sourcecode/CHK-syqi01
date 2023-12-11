@@ -555,7 +555,7 @@ def checkout(skus):
 
 # total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-temp = checkout("STXYXZ")
+temp = checkout("F")
 pprint("FINAL CHECK")
 pprint(temp)
 
@@ -608,6 +608,9 @@ test_cases = [
     ("FFFFFFFFFF", 70),
 ]
 
+ - {"method":"checkout","params":["F"],"id":"CHK_R5_008"}, expected: 10, got: 20
+ - {"method":"checkout","params":["U"],"id":"CHK_R5_023"}, expected: 40, got: 120
+ - {"method":"checkout","params":["ABCDEFGHIJKLMNOPQRSTUVW"],"id":"CHK_R5_033"}, expected: 795, got: 885
 
 def quick_test(cart_function, test_cases):
     results = []
@@ -719,3 +722,4 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
