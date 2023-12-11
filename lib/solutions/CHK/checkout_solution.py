@@ -113,25 +113,26 @@ def parse_special_offers(data):
                 if "for" in offer:
                     # Simple offers like "3A for 130"
                     parts = offer.split(" ")
-                    count = int(
-                        parts[0][0]
-                    )  # Assuming the count is the first character
+                    count = extract_number(parts[0])
+
                     total_price = int(parts[2])
                     parsed_offers[offer] = {
-                        "input": {
-                            item: {
+                        "input": [
+                            {
+                                item: item,
                                 "count": count,
                                 "t_price": float(price * count),
                                 "price_calc": f"{count}*{price}",
                             }
-                        },
-                        "output": {
-                            item: {
+                        ],
+                        "output": [
+                            {
+                                item: item,
                                 "count": count,
                                 "t_price": float(total_price),
                                 "price_calc": str(total_price),
                             }
-                        },
+                        ],
                     }
 
                 elif "get one" in offer:
@@ -143,40 +144,54 @@ def parse_special_offers(data):
                     ) = parse_get_one_free_offer(item, price, offer, data)
 
                     parsed_offers[offer] = {
-                        "input": {
-                            item: {
+                        "input": [
+                            {
+                                "item": item,
                                 "count": primary_item_count,
                                 "t_price": float(price * primary_item_count),
                                 "price_calc": f"{primary_item_count}*{price}",
                             },
-                            free_item: {
+                            {
+                                "item": free_item,
                                 "count": 1,
                                 "t_price": float(free_item_price),
                                 "price_calc": f"1*{free_item_price}",
                             },
-                        },
-                        "output": {
-                            item: {
+                        ],
+                        "output": [
+                            {
+                                "item": item,
                                 "count": primary_item_count,
                                 "t_price": float(price * primary_item_count),
                                 "price_calc": f"{primary_item_count}*{price}",
                             },
-                            free_item: {
+                            {
+                                "item": free_item,
                                 "count": 1,
                                 "t_price": 0.0,
                                 "price_calc": "0*1",
                             },
-                        },
+                        ],
                     }
             else:
                 # Default offer (no special offer)
                 parsed_offers[""] = {
-                    "input": {
-                        item: {"count": 1, "t_price": float(price), "price_calc": ""}
-                    },
-                    "output": {
-                        item: {"count": 1, "t_price": float(price), "price_calc": ""}
-                    },
+                    "input": [
+                        {
+                            item: item,
+                            "count": 1,
+                            "t_price": float(price),
+                            "price_calc": "",
+                        }
+                    ],
+                    "output": [
+                        {
+                            item: item,
+                            "count": 1,
+                            "t_price": float(price),
+                            "price_calc": "",
+                        }
+                    ],
                 }
 
     return parsed_offers
@@ -199,6 +214,130 @@ def parse_get_one_free_offer(item, price, offer, data):
 parsed_special_offers = parse_special_offers(reformatted_pricing_data)
 print("\n\n parse special offers into input / output format ready for processing")
 pprint(parsed_special_offers)
+
+# snapshot for regression testing at speed
+
+snapshot_1 = {
+    "": {
+        "input": [{"Z": "Z", "count": 1, "price_calc": "", "t_price": 50.0}],
+        "output": [{"Z": "Z", "count": 1, "price_calc": "", "t_price": 50.0}],
+    },
+    "10H for 80": {
+        "input": [{"H": "H", "count": 10, "price_calc": "10*10", "t_price": 100.0}],
+        "output": [{"H": "H", "count": 10, "price_calc": "80", "t_price": 80.0}],
+    },
+    "2B for 45": {
+        "input": [{"B": "B", "count": 2, "price_calc": "2*30", "t_price": 60.0}],
+        "output": [{"B": "B", "count": 2, "price_calc": "45", "t_price": 45.0}],
+    },
+    "2E get one B free": {
+        "input": [
+            {"count": 2, "item": "E", "price_calc": "2*40", "t_price": 80.0},
+            {"count": 1, "item": "B", "price_calc": "1*30", "t_price": 30.0},
+        ],
+        "output": [
+            {"count": 2, "item": "E", "price_calc": "2*40", "t_price": 80.0},
+            {"count": 1, "item": "B", "price_calc": "0*1", "t_price": 0.0},
+        ],
+    },
+    "2F get one F free": {
+        "input": [
+            {"count": 2, "item": "F", "price_calc": "2*10", "t_price": 20.0},
+            {"count": 1, "item": "F", "price_calc": "1*10", "t_price": 10.0},
+        ],
+        "output": [
+            {"count": 2, "item": "F", "price_calc": "2*10", "t_price": 20.0},
+            {"count": 1, "item": "F", "price_calc": "0*1", "t_price": 0.0},
+        ],
+    },
+    "2K for 150": {
+        "input": [{"K": "K", "count": 2, "price_calc": "2*80", "t_price": 160.0}],
+        "output": [{"K": "K", "count": 2, "price_calc": "150", "t_price": 150.0}],
+    },
+    "2V for 90": {
+        "input": [{"V": "V", "count": 2, "price_calc": "2*50", "t_price": 100.0}],
+        "output": [{"V": "V", "count": 2, "price_calc": "90", "t_price": 90.0}],
+    },
+    "3A for 130": {
+        "input": [{"A": "A", "count": 3, "price_calc": "3*50", "t_price": 150.0}],
+        "output": [{"A": "A", "count": 3, "price_calc": "130", "t_price": 130.0}],
+    },
+    "3N get one M free": {
+        "input": [
+            {"count": 3, "item": "N", "price_calc": "3*40", "t_price": 120.0},
+            {"count": 1, "item": "M", "price_calc": "1*15", "t_price": 15.0},
+        ],
+        "output": [
+            {"count": 3, "item": "N", "price_calc": "3*40", "t_price": 120.0},
+            {"count": 1, "item": "M", "price_calc": "0*1", "t_price": 0.0},
+        ],
+    },
+    "3Q for 80": {
+        "input": [{"Q": "Q", "count": 3, "price_calc": "3*30", "t_price": 90.0}],
+        "output": [{"Q": "Q", "count": 3, "price_calc": "80", "t_price": 80.0}],
+    },
+    "3R get one Q free": {
+        "input": [
+            {"count": 3, "item": "R", "price_calc": "3*50", "t_price": 150.0},
+            {"count": 1, "item": "Q", "price_calc": "1*30", "t_price": 30.0},
+        ],
+        "output": [
+            {"count": 3, "item": "R", "price_calc": "3*50", "t_price": 150.0},
+            {"count": 1, "item": "Q", "price_calc": "0*1", "t_price": 0.0},
+        ],
+    },
+    "3U get one U free": {
+        "input": [
+            {"count": 3, "item": "U", "price_calc": "3*40", "t_price": 120.0},
+            {"count": 1, "item": "U", "price_calc": "1*40", "t_price": 40.0},
+        ],
+        "output": [
+            {"count": 3, "item": "U", "price_calc": "3*40", "t_price": 120.0},
+            {"count": 1, "item": "U", "price_calc": "0*1", "t_price": 0.0},
+        ],
+    },
+    "3V for 130": {
+        "input": [{"V": "V", "count": 3, "price_calc": "3*50", "t_price": 150.0}],
+        "output": [{"V": "V", "count": 3, "price_calc": "130", "t_price": 130.0}],
+    },
+    "5A for 200": {
+        "input": [{"A": "A", "count": 5, "price_calc": "5*50", "t_price": 250.0}],
+        "output": [{"A": "A", "count": 5, "price_calc": "200", "t_price": 200.0}],
+    },
+    "5H for 45": {
+        "input": [{"H": "H", "count": 5, "price_calc": "5*10", "t_price": 50.0}],
+        "output": [{"H": "H", "count": 5, "price_calc": "45", "t_price": 45.0}],
+    },
+    "5P for 200": {
+        "input": [{"P": "P", "count": 5, "price_calc": "5*50", "t_price": 250.0}],
+        "output": [{"P": "P", "count": 5, "price_calc": "200", "t_price": 200.0}],
+    },
+}
+
+# snapshot function
+for offer in parsed_special_offers.keys():
+    if (
+        snapshot_1[offer]["input"] == parsed_special_offers[offer]["input"]
+        and snapshot_1[offer]["output"] == parsed_special_offers[offer]["output"]
+    ):
+        pass
+    else:
+        print(f"offer: {offer}")
+        print(f"input: {parsed_special_offers[offer]['input']}")
+        print(f"output: {parsed_special_offers[offer]['output']}")
+        print(f"snapshot: {snapshot_1[offer]}")
+        print(f"snapshot test 1 {snapshot_1[offer]==parsed_special_offers[offer]}")
+        print(
+            f"snapshot test 2 {snapshot_1[offer]['input']==parsed_special_offers[offer]['input']}"
+        )
+        print(
+            f"snapshot test 3 {snapshot_1[offer]['output']==parsed_special_offers[offer]['output']}"
+        )
+
+print(f"snapshot test 1 {snapshot_1==parsed_special_offers}")
+
+parsed_special_offers = parsed_special_offers
+
 
 # this is currently outputting mostly right but it's calling cross-item offers "free".
 # free_item = parts[4]  # Assuming the free item is the last word in the offer
@@ -440,6 +579,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
