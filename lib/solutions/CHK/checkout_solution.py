@@ -408,8 +408,13 @@ def calculate_savings(offers, item_prices):
             # For cross-product offers, calculate the input total based on the cheapest items
             group_items = details["input"][0]["items"]
             count = details["input"][0]["count"]
+
+            # Ensure group_items is a list of valid item keys
+            group_items = [item for item in group_items if item in item_prices]
+
             # Get the prices of the items in the group and sort them
             group_item_prices = sorted([item_prices[item] for item in group_items])
+
             # Sum the prices of the cheapest items up to the required count
             input_total = sum(group_item_prices[:count])
             output_total = details["output"][0]["t_price"]
@@ -428,14 +433,16 @@ item_prices = {
     item: float(details["Price"]) for item, details in pricing_table_dict.items()
 }
 
+# Example usage
 special_offers_w_savings = calculate_savings(parsed_special_offers, item_prices)
-pprint("\n\n special offers with savings")
+print("\n\n special offers with savings")
 pprint(special_offers_w_savings)
+
 
 # now have savings for each offer, can sort by savings and apply offers in order of savings
 
 # Sample shopping cart as a string
-shopping_cart_str = "AAABAEEFF"
+shopping_cart_str = "AAABAEEFFSTX"
 
 # Sort the offers based on savings
 sorted_offers = sorted(
@@ -528,9 +535,9 @@ def checkout(skus):
 
 # total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-# temp = checkout("AAAAA")
-# pprint("FINAL CHECK")
-# pprint(temp)
+temp = checkout("STX")
+pprint("FINAL CHECK")
+pprint(temp)
 
 
 test_cases = [
@@ -692,9 +699,3 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
-
-
-
-
-
-
