@@ -174,7 +174,6 @@ def parse_special_offers(data):
                     # Simple offers like "3A for 130"
                     parts = offer.split(" ")
                     count = extract_number(parts[0])
-
                     total_price = int(parts[2])
                     parsed_offers[offer] = {
                         "input": [
@@ -676,4 +675,5 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
