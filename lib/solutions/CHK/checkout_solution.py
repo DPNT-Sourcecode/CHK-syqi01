@@ -466,9 +466,10 @@ sorted_cart = sort_cart(shopping_cart_str)
 
 # main function to calculate price
 # Adjusted function to handle sorted offers as a list of tuples
-def apply_offers_to_cart_v2(cart, sorted_offers):
+# Correcting the logic for handling standard offers in apply_offers_to_cart_v3 function
+def apply_offers_to_cart_v2(cart, offers):
     # Validate the cart using simple regex
-    if cart == []:
+    if not cart:
         return 0
     regex_pattern = r"^[A-Z]+$"
     if not re.match(regex_pattern, "".join(cart)):
@@ -477,8 +478,7 @@ def apply_offers_to_cart_v2(cart, sorted_offers):
     working_cart = cart.copy()
     total_price = 0
 
-    # Iterate over the sorted offers, which is a list of tuples (offer_name, offer_details)
-    for offer_name, offer_details in sorted_offers:
+    for offer_name, offer_details in offers:
         if offer_details.get("type") == "cross-product":
             # Handle cross-product offers
             group_items = offer_details["input"][0]["items"]
@@ -499,16 +499,17 @@ def apply_offers_to_cart_v2(cart, sorted_offers):
                 actual_count = sum(working_cart.count(item) for item in group_items)
 
         else:
-            # Adjusted logic for standard offers
+            # Handle standard offers
             offer_requirements = {}
-            for item_details in offer_details["input"]:
-                item_key = item_details.get("item")
-                if item_key:
-                    count = item_details["count"]
-                    if item_key in offer_requirements:
-                        offer_requirements[item_key] += count
-                    else:
-                        offer_requirements[item_key] = count
+            for item_detail in offer_details["input"]:
+                if "item" in item_detail:
+                    item_key = item_detail["item"]
+                else:
+                    # Assuming the first key in the dictionary is the item key
+                    item_key = next(iter(item_detail))
+
+                count = item_detail["count"]
+                offer_requirements[item_key] = count
 
             can_apply_offer = all(
                 working_cart.count(item) >= count
@@ -527,8 +528,9 @@ def apply_offers_to_cart_v2(cart, sorted_offers):
                     for item, count in offer_requirements.items()
                 )
 
+    # Calculate the price for items without offers
     for item in working_cart:
-        item_price = float(mock_pricing_table_dict_cross_product[item]["Price"])
+        item_price = float(mock_pricing_table_dict[item]["Price"])
         total_price += item_price
 
     return total_price
@@ -712,8 +714,3 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
-
-
-
-
-
