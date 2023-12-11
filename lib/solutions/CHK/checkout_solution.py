@@ -530,9 +530,8 @@ def apply_offers_to_cart_v2(cart, offers):
 
     # Calculate the price for items without offers
     for item in working_cart:
-        item_price = float(mock_pricing_table_dict[item]["Price"])
+        item_price = float(pricing_table_dict[item]["Price"])
         total_price += item_price
-
     return total_price
 
 
@@ -714,3 +713,4 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
