@@ -23,8 +23,8 @@ pricing_table_string = """
 | P    | 50    | 5P for 200                      |
 | Q    | 30    | 3Q for 80                       |
 | R    | 50    | 3R get one Q free               |
-| S    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
-| T    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| S    | 20    | buy any 3 of (S,T,X,Y,Z) fr 45 |
+| T    | 20    | buy any 3 of (S,T,X,Y,Z) fr 45 |
 | U    | 40    | 3U get one U free               |
 | V    | 50    | 2V for 90, 3V for 130           |
 | W    | 20    |                                 |
@@ -378,27 +378,27 @@ snapshot_1 = {
 }
 
 
-# snapshot function
-for offer in parsed_special_offers.keys():
-    if (
-        snapshot_1[offer]["input"] == parsed_special_offers[offer]["input"]
-        and snapshot_1[offer]["output"] == parsed_special_offers[offer]["output"]
-    ):
-        pass
-    else:
-        print(f"offer: {offer}")
-        print(f"input: {parsed_special_offers[offer]['input']}")
-        print(f"output: {parsed_special_offers[offer]['output']}")
-        print(f"snapshot: {snapshot_1[offer]}")
-        print(f"snapshot test 1 {snapshot_1[offer]==parsed_special_offers[offer]}")
-        print(
-            f"snapshot test 2 {snapshot_1[offer]['input']==parsed_special_offers[offer]['input']}"
-        )
-        print(
-            f"snapshot test 3 {snapshot_1[offer]['output']==parsed_special_offers[offer]['output']}"
-        )
+# # snapshot function
+# for offer in parsed_special_offers.keys():
+#     if (
+#         snapshot_1[offer]["input"] == parsed_special_offers[offer]["input"]
+#         and snapshot_1[offer]["output"] == parsed_special_offers[offer]["output"]
+#     ):
+#         pass
+#     else:
+#         print(f"offer: {offer}")
+#         print(f"input: {parsed_special_offers[offer]['input']}")
+#         print(f"output: {parsed_special_offers[offer]['output']}")
+#         print(f"snapshot: {snapshot_1[offer]}")
+#         print(f"snapshot test 1 {snapshot_1[offer]==parsed_special_offers[offer]}")
+#         print(
+#             f"snapshot test 2 {snapshot_1[offer]['input']==parsed_special_offers[offer]['input']}"
+#         )
+#         print(
+#             f"snapshot test 3 {snapshot_1[offer]['output']==parsed_special_offers[offer]['output']}"
+#         )
 
-print(f"snapshot test 1 {snapshot_1 == parsed_special_offers}")
+# print(f"snapshot test 1 {snapshot_1 == parsed_special_offers}")
 
 
 # Function to calculate savings for each offer and add to the dict
@@ -675,6 +675,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
