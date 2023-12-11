@@ -504,9 +504,17 @@ def apply_offers_to_cart_v2(cart, offers):
             # Handle standard offers
             offer_requirements = {}
             for item_detail in offer_details["input"]:
-                item_key = item_detail.get("item") or next(iter(item_detail))
+                if "item" in item_detail:
+                    item_key = item_detail["item"]
+                else:
+                    # Assuming the first key in the dictionary is the item key
+                    item_key = next(iter(item_detail))
+
                 count = item_detail["count"]
-                offer_requirements[item_key] = count
+                if item_key in offer_requirements:
+                    offer_requirements[item_key] += count
+                else:
+                    offer_requirements[item_key] = count
 
             can_apply_offer = all(
                 working_cart.count(item) >= count
@@ -547,7 +555,7 @@ def checkout(skus):
 
 # total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-temp = checkout("STX")
+temp = checkout("STXYXZ")
 pprint("FINAL CHECK")
 pprint(temp)
 
@@ -711,6 +719,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
