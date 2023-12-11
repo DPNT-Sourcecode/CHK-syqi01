@@ -95,13 +95,12 @@ def reformat_pricing_data(pricing_data):
 reformatted_pricing_data = reformat_pricing_data(pricing_table_dict)
 print("\n\nreformatted pricing data to split out prices!")
 pprint(reformatted_pricing_data)
-print("\n\n")
 
 # Reformat the pricing table dictionary
 reformatted_pricing_data = reformat_pricing_data(pricing_table_dict)
 
 
-def parse_special_offers_final(data):
+def parse_special_offers(data):
     parsed_offers = {}
 
     for item_data in data:
@@ -109,69 +108,66 @@ def parse_special_offers_final(data):
             offer = details["Special offers"]
             price = int(details["Price"])
 
-            # Handle offers
+            # Handle complex offers
             if offer:
                 if "for" in offer:
-                    # Offers like "3A for 130"
+                    # Simple offers like "3A for 130"
                     parts = offer.split(" ")
                     count = int(
                         parts[0][0]
                     )  # Assuming the count is the first character
                     total_price = int(parts[2])
-                    input_count = count
-                    output_count = count
-                    input_t_price = float(price * input_count)
-                    output_t_price = float(total_price)
-                    input_price_calc = f"{price}*{input_count}"
-                    output_price_calc = str(total_price)
-
                     parsed_offers[offer] = {
                         "input": {
                             item: {
-                                "count": input_count,
-                                "t_price": input_t_price,
-                                "price_calc": input_price_calc,
+                                "count": count,
+                                "t_price": float(price * count),
+                                "price_calc": f"{count}*{price}",
                             }
                         },
                         "output": {
                             item: {
-                                "count": output_count,
-                                "t_price": output_t_price,
-                                "price_calc": output_price_calc,
+                                "count": count,
+                                "t_price": float(total_price),
+                                "price_calc": str(total_price),
                             }
                         },
                     }
 
                 elif "get one" in offer:
-                    # Offers like "2F get one F free"
-                    parts = offer.split(" ")
-                    count = int(
-                        parts[0][0]
-                    )  # Assuming the count is the first character
-                    input_count = count + 1
-                    output_count = input_count
-                    input_t_price = float(price * input_count)
-                    output_t_price = float(price * count)
-                    input_price_calc = f"{price}*{input_count}"
-                    output_price_calc = f"{price}*{count}"
+                    # Offers like "2E get one B free"
+                    (
+                        primary_item_count,
+                        free_item,
+                        free_item_price,
+                    ) = parse_get_one_free_offer(item, price, offer, data)
 
                     parsed_offers[offer] = {
                         "input": {
                             item: {
-                                "count": input_count,
-                                "t_price": input_t_price,
-                                "price_calc": input_price_calc,
-                            }
+                                "count": primary_item_count,
+                                "t_price": float(price * primary_item_count),
+                                "price_calc": f"{primary_item_count}*{price}",
+                            },
+                            free_item: {
+                                "count": 1,
+                                "t_price": float(free_item_price),
+                                "price_calc": f"1*{free_item_price}",
+                            },
                         },
                         "output": {
                             item: {
-                                "count": output_count,
-                                "t_price": output_t_price,
-                                "price_calc": output_price_calc,
-                            }
+                                "count": primary_item_count,
+                                "t_price": float(price * primary_item_count),
+                                "price_calc": f"{primary_item_count}*{price}",
+                            },
+                            free_item: {
+                                "count": 1,
+                                "t_price": 0.0,
+                                "price_calc": "0*1",
+                            },
                         },
                     }
-
             else:
                 # Default offer (no special offer)
                 parsed_offers[""] = {
@@ -186,9 +182,23 @@ def parse_special_offers_final(data):
     return parsed_offers
 
 
+# Helper function to parse "get one free" offers
+def parse_get_one_free_offer(item, price, offer, data):
+    parts = offer.split(" ")
+    primary_item_count = int(parts[0][0])  # Assuming the count is the first character
+    free_item = parts[4]  # Assuming the free item is the last word in the offer
+    free_item_price = 0
+    for offer_data in data:
+        if free_item in offer_data:
+            free_item_price = int(offer_data[free_item]["Price"])
+            break
+    return primary_item_count, free_item, free_item_price
+
+
 # Parse the special offers from the reformatted pricing data using the final format
-parsed_special_offers_final = parse_special_offers_final(reformatted_pricing_data)
-parsed_special_offers_final
+parsed_special_offers = parse_special_offers(reformatted_pricing_data)
+print("\n\n parse special offers into input / output format ready for processing")
+pprint(parsed_special_offers)
 
 
 # class Checkout:
@@ -425,6 +435,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
