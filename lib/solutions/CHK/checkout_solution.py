@@ -442,7 +442,7 @@ pprint(special_offers_w_savings)
 # now have savings for each offer, can sort by savings and apply offers in order of savings
 
 # Sample shopping cart as a string
-shopping_cart_str = "AAABAEEFFSTX"
+shopping_cart_str = "ABCDECBAABCABBAAAEEAAU"
 
 # Sort the offers based on savings
 sorted_offers = sorted(
@@ -725,5 +725,6 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
