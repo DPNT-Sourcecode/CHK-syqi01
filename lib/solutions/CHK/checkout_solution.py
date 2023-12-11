@@ -382,6 +382,8 @@ sorted_cart = sort_cart(shopping_cart_str)
 # main function to calculate price
 def apply_offers_to_cart_v2(cart, offers):
     # validate the cart using simple regex
+    if cart == []:
+        return 0
     regex_pattern = r"^[A-Z]+$"
     if not re.match(regex_pattern, "".join(cart)):
         return -1
@@ -457,7 +459,7 @@ def checkout(skus):
 
 
 test_cases = [
-    ("", -1),  # not sure why we set this to zero before.. GPT did it again as well.
+    ("", 0),  # it was zero. changed back
     ("A", 50),
     ("B", 30),
     ("C", 20),
@@ -615,6 +617,7 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
