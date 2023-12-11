@@ -1,4 +1,5 @@
 from pprint import pprint
+import re
 
 pricing_table_string = """
 +------+-------+------------------------+
@@ -197,6 +198,11 @@ def parse_special_offers(data):
     return parsed_offers
 
 
+def extract_number(s):
+    match = re.search(r"\d+", s)
+    return int(match.group()) if match else None
+
+
 # Helper function to parse "get one free" offers
 def parse_get_one_free_offer(item, price, offer, data):
     parts = offer.split(" ")
@@ -216,7 +222,6 @@ print("\n\n parse special offers into input / output format ready for processing
 pprint(parsed_special_offers)
 
 # snapshot for regression testing at speed
-
 snapshot_1 = {
     "": {
         "input": [{"Z": "Z", "count": 1, "price_calc": "", "t_price": 50.0}],
@@ -314,6 +319,7 @@ snapshot_1 = {
     },
 }
 
+
 # snapshot function
 for offer in parsed_special_offers.keys():
     if (
@@ -337,7 +343,6 @@ for offer in parsed_special_offers.keys():
 print(f"snapshot test 1 {snapshot_1==parsed_special_offers}")
 
 parsed_special_offers = parsed_special_offers
-
 
 # this is currently outputting mostly right but it's calling cross-item offers "free".
 # free_item = parts[4]  # Assuming the free item is the last word in the offer
@@ -579,6 +584,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
