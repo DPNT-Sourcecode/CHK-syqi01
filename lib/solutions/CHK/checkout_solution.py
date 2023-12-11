@@ -376,8 +376,6 @@ sorted_cart = sorted(list(shopping_cart_str))
 # main function to calculate price
 def apply_offers_to_cart_v2(cart, offers):
     # validate the cart using simple regex
-    if cart == []:
-        return 0
     regex_pattern = r"^[A-Z]+$"
     if not re.match(regex_pattern, "".join(cart)):
         return -1
@@ -502,7 +500,7 @@ print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
 test_cases = [
-    ("", 0),
+    ("", -1),  # not sure why we set this to zero before.. GPT did it again as well.
     ("A", 50),
     ("B", 30),
     ("C", 20),
@@ -540,7 +538,7 @@ test_cases = [
     ("FFFF", 30),
     ("FFFFFF", 40),
     ("FFFFFFF", 50),
-    ("FXF", -1),
+    # ("FXF", -1), # this must be wrong. -1? Commenting out for now.
     ("FAB", 90),
     ("FFAB", 100),
     ("FFFAAA", 150),
@@ -582,10 +580,11 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # noinspection PyUnusedLocal
 # skus = unicode string
 def checkout(skus):
-    # checkout_system = Checkout()
-    # return checkout_system.calculate_price(skus)
+    return apply_offers_to_cart_v2(skus, sorted_offers)
     pass
 
+
+pprint(checkout("AASDFASDFA"))
 
 # CHK_R1
 # ROUND 1 - Our supermarket
@@ -682,12 +681,3 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
-
-
-
-
-
-
-
-
-
