@@ -533,9 +533,7 @@ def apply_offers_to_cart_v2(cart, offers):
     return total_price
 
 
-total_cart_price_v2 = apply_offers_to_cart_v2(
-    sorted_cart, sorted_offers, pricing_table_dict
-)
+total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
@@ -713,5 +711,6 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
