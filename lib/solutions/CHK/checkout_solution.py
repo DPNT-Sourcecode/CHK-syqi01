@@ -342,7 +342,25 @@ for offer in parsed_special_offers.keys():
 
 print(f"snapshot test 1 {snapshot_1==parsed_special_offers}")
 
-parsed_special_offers = parsed_special_offers
+
+# Function to calculate savings for each offer and add to the dict
+def calculate_savings(offers):
+    for offer, details in offers.items():
+        input_total = sum(item["t_price"] for item in details["input"])
+        output_total = sum(item["t_price"] for item in details["output"])
+        saving = input_total - output_total
+        offers[offer]["saving"] = saving
+    return offers
+
+
+special_offers_w_savings = calculate_savings(parsed_special_offers)
+pprint(special_offers_w_savings)
+
+# now have savings for each offer, can sort by savings and apply offers in order of savings
+
+# Sample shopping cart as a string
+shopping_cart_str = "AAABAEEFF"
+
 
 # this is currently outputting mostly right but it's calling cross-item offers "free".
 # free_item = parts[4]  # Assuming the free item is the last word in the offer
@@ -584,6 +602,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
