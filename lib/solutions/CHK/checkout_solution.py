@@ -369,8 +369,14 @@ sorted_offers = sorted(
     reverse=True,
 )
 
-# Convert the shopping cart string into a sorted list
-sorted_cart = sorted(list(shopping_cart_str))
+
+def sort_cart(cart):
+    # Convert the shopping cart string into a sorted list
+    sorted_cart = sorted(list(shopping_cart_str))
+    return sorted_cart
+
+
+sorted_cart = sort_cart(shopping_cart_str)
 
 
 # main function to calculate price
@@ -581,7 +587,6 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # skus = unicode string
 def checkout(skus):
     return apply_offers_to_cart_v2(skus, sorted_offers)
-    pass
 
 
 pprint(checkout("AASDFASDFA"))
@@ -681,3 +686,4 @@ pprint(checkout("AASDFASDFA"))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
