@@ -340,7 +340,7 @@ for offer in parsed_special_offers.keys():
             f"snapshot test 3 {snapshot_1[offer]['output']==parsed_special_offers[offer]['output']}"
         )
 
-print(f"snapshot test 1 {snapshot_1==parsed_special_offers}")
+print(f"snapshot test 1 {snapshot_1 == parsed_special_offers}")
 
 
 # Function to calculate savings for each offer and add to the dict
@@ -354,12 +354,87 @@ def calculate_savings(offers):
 
 
 special_offers_w_savings = calculate_savings(parsed_special_offers)
+pprint("\n\n special offers with savings")
 pprint(special_offers_w_savings)
 
 # now have savings for each offer, can sort by savings and apply offers in order of savings
 
 # Sample shopping cart as a string
 shopping_cart_str = "AAABAEEFF"
+
+# Sort the offers based on savings
+sorted_offers = sorted(
+    special_offers_w_savings.items(),
+    key=lambda x: x[1]["saving"],
+    reverse=True,
+)
+
+# Convert the shopping cart string into a sorted list
+sorted_cart = sorted(list(shopping_cart_str))
+
+
+# main function to calculate price
+def apply_offers_to_cart_v2(cart, offers):
+    # validate the cart using simple regex
+    if cart == []:
+        return 0
+    regex_pattern = r"^[A-Z]+$"
+    if not re.match(regex_pattern, "".join(cart)):
+        return -1
+
+    working_cart = cart.copy()
+    total_price = 0
+
+    for offer_name, offer_details in offers:
+        if offer_name:  # Skip the empty offer
+            # Initialize an empty dictionary for offer requirements
+            offer_requirements = {}
+
+            # Iterate through each item detail in the offer's input
+            for item_details in offer_details["input"]:
+                # Determine the item key (name)
+                if "item" in item_details:
+                    item_key = item_details["item"]
+                else:
+                    # If 'item' key is not present, use the first key (assuming it's the item name)
+                    item_key = next(iter(item_details))
+
+                # Accumulate the count for each item
+                if item_key in offer_requirements:
+                    offer_requirements[item_key] += item_details["count"]
+                else:
+                    offer_requirements[item_key] = item_details["count"]
+
+            # Check if the offer can be applied
+            can_apply_offer = all(
+                working_cart.count(item) >= count
+                for item, count in offer_requirements.items()
+            )
+            while can_apply_offer:
+                # Apply the offer
+                for output_item in offer_details["output"]:
+                    total_price += output_item["t_price"]
+                # Remove the used items from the working cart
+                for item, count in offer_requirements.items():
+                    for _ in range(count):
+                        working_cart.remove(item)
+
+                # Re-check if the offer can still be applied
+                can_apply_offer = all(
+                    working_cart.count(item) >= count
+                    for item, count in offer_requirements.items()
+                )
+
+    # Calculate the price for items without offers
+    for item in working_cart:
+        item_price = float(pricing_table_dict[item]["Price"])
+        total_price += item_price
+
+    return total_price
+
+
+total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
+print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
 # this is currently outputting mostly right but it's calling cross-item offers "free".
@@ -426,65 +501,70 @@ shopping_cart_str = "AAABAEEFF"
 #         return total
 
 
-# @staticmethod
-def run_tests():
-    checkout = Checkout()
-    test_cases = [
-        ("", 0),
-        ("A", 50),
-        ("B", 30),
-        ("C", 20),
-        ("D", 15),
-        ("E", 40),
-        ("a", -1),
-        ("-", -1),
-        ("ABCa", -1),
-        ("AxA", -1),
-        ("ABCDE", 155),
-        ("AA", 100),
-        ("AAA", 130),
-        ("AAAA", 180),
-        ("AAAAA", 200),
-        ("AAAAAA", 250),
-        ("AAAAAAA", 300),
-        ("AAAAAAAA", 330),
-        ("AAAAAAAAA", 380),
-        ("AAAAAAAAAA", 400),
-        ("EE", 80),
-        ("EEB", 80),
-        ("EEEB", 120),
-        ("EEEEBB", 160),
-        ("BEBEEE", 160),
-        ("BB", 45),
-        ("BBB", 75),
-        ("BBBB", 90),
-        ("ABCDEABCDE", 280),
-        ("CCADDEEBBA", 280),
-        ("AAAAAEEBAAABB", 455),
-        ("ABCDECBAABCABBAAAEEAA", 665),
-        ("F", 10),
-        ("FF", 20),
-        ("FFF", 20),
-        ("FFFF", 30),
-        ("FFFFFF", 40),
-        ("FFFFFFF", 50),
-        ("FXF", -1),
-        ("FAB", 90),
-        ("FFAB", 100),
-        ("FFFAAA", 150),
-        ("FFFFFFAB", 120),
-        ("FFFFD", 45),
-        ("FFFFFFFFFF", 70),
-    ]
-    # run and print tests
-    passed = sum(
-        1 for skus, expected in test_cases if checkout.calculate_price(skus) == expected
-    )
-    for skus, expected in test_cases:
-        result = checkout.calculate_price(skus)
-        if result != expected:
-            print(f"Test failed for input '{skus}': Expected {expected}, got {result}")
-    return f"{passed}/{len(test_cases)} tests passed."
+test_cases = [
+    ("", 0),
+    ("A", 50),
+    ("B", 30),
+    ("C", 20),
+    ("D", 15),
+    ("E", 40),
+    ("a", -1),
+    ("-", -1),
+    ("ABCa", -1),
+    ("AxA", -1),
+    ("ABCDE", 155),
+    ("AA", 100),
+    ("AAA", 130),
+    ("AAAA", 180),
+    ("AAAAA", 200),
+    ("AAAAAA", 250),
+    ("AAAAAAA", 300),
+    ("AAAAAAAA", 330),
+    ("AAAAAAAAA", 380),
+    ("AAAAAAAAAA", 400),
+    ("EE", 80),
+    ("EEB", 80),
+    ("EEEB", 120),
+    ("EEEEBB", 160),
+    ("BEBEEE", 160),
+    ("BB", 45),
+    ("BBB", 75),
+    ("BBBB", 90),
+    ("ABCDEABCDE", 280),
+    ("CCADDEEBBA", 280),
+    ("AAAAAEEBAAABB", 455),
+    ("ABCDECBAABCABBAAAEEAA", 665),
+    ("F", 10),
+    ("FF", 20),
+    ("FFF", 20),
+    ("FFFF", 30),
+    ("FFFFFF", 40),
+    ("FFFFFFF", 50),
+    ("FXF", -1),
+    ("FAB", 90),
+    ("FFAB", 100),
+    ("FFFAAA", 150),
+    ("FFFFFFAB", 120),
+    ("FFFFD", 45),
+    ("FFFFFFFFFF", 70),
+]
+
+
+def quick_test(cart_function, test_cases):
+    results = []
+    for test_case in test_cases:
+        try:
+            input_str, expected = test_case
+            sorted_cart = sorted(list(input_str))
+            got = cart_function(sorted_cart, sorted_offers)
+            result = f"I: {input_str} | E: {expected} | G: {got} | {'✅' if got == expected else '❌'}"
+        except Exception as e:
+            result = f"I: {input_str} | E: {expected} | Error: {str(e)} | ❌"
+        results.append(result)
+    return results
+
+
+pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 
 
 # TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
@@ -602,6 +682,7 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
