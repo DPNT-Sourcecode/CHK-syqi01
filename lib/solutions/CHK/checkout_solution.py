@@ -143,6 +143,33 @@ def parse_special_offers(data):
 
             # Handle complex offers
             if offer:
+                if "buy any" in offer:
+                    # Example offer: "buy any 3 of STXYZ for 45"
+                    parts = offer.split(" ")
+                    count = extract_number(parts[2])  # The required count
+                    group_items = parts[
+                        4
+                    ]  # The group of items involved (e.g., "STXYZ")
+                    special_price = int(parts[-1])  # The special price
+
+                    parsed_offers[offer] = {
+                        "type": "cross-product",
+                        "input": [
+                            {
+                                "items": list(group_items),
+                                "count": count,
+                                "price_calc": "variable",
+                            }
+                        ],
+                        "output": [
+                            {
+                                "items": list(group_items),
+                                "count": count,
+                                "t_price": float(special_price),
+                            }
+                        ],
+                    }
+
                 if "for" in offer:
                     # Simple offers like "3A for 130"
                     parts = offer.split(" ")
@@ -649,3 +676,4 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
