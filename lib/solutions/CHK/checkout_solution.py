@@ -462,7 +462,7 @@ sorted_cart = sort_cart(shopping_cart_str)
 
 
 # main function to calculate price
-def apply_offers_to_cart_v3(cart, offers):
+def apply_offers_to_cart_v2(cart, offers):
     # Validate the cart using simple regex
     if cart == []:
         return 0
@@ -473,7 +473,7 @@ def apply_offers_to_cart_v3(cart, offers):
     working_cart = cart.copy()
     total_price = 0
 
-    for offer_name, offer_details in offers:
+    for offer_name, offer_details in offers.items():
         if offer_name:  # Skip the empty offer
             if offer_details.get("type") == "cross-product":
                 # Handle cross-product offers
@@ -530,13 +530,13 @@ def apply_offers_to_cart_v3(cart, offers):
 
     # Calculate the price for items without offers
     for item in working_cart:
-        item_price = float(pricing_table_dict[item]["Price"])
+        item_price = float(mock_pricing_table_dict[item]["Price"])
         total_price += item_price
 
     return total_price
 
 
-total_cart_price_v2 = apply_offers_to_cart_v3(sorted_cart, sorted_offers)
+total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
@@ -544,7 +544,7 @@ print(f"\n\n total cart price : {total_cart_price_v2}")
 # skus = unicode string
 def checkout(skus):
     sorted_cart = sorted(list(skus))
-    best_price = apply_offers_to_cart_v3(sorted_cart, sorted_offers)
+    best_price = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
     return best_price
 
 
@@ -618,7 +618,7 @@ def quick_test(cart_function, test_cases):
     return results
 
 
-pprint(quick_test(apply_offers_to_cart_v3, test_cases))
+pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # CHK_R1
 # ROUND 1 - Our supermarket
 # The purpose of this challenge is to implement a supermarket checkout that calculates the total price of a number of items.
@@ -714,5 +714,6 @@ pprint(quick_test(apply_offers_to_cart_v3, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
