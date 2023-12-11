@@ -589,7 +589,8 @@ def checkout(skus):
     return apply_offers_to_cart_v2(skus, sorted_offers)
 
 
-pprint(checkout("AASDFASDFA"))
+temp = checkout("AASDFASDFA")
+pprint(temp)
 
 # CHK_R1
 # ROUND 1 - Our supermarket
@@ -686,4 +687,5 @@ pprint(checkout("AASDFASDFA"))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
