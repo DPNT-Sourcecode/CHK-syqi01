@@ -1,128 +1,182 @@
-class Checkout:
-    def __init__(self):
-        self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10}
-        self.offers = {
-            "A": {"quantity": 3, "price": 130},
-            "B": {"quantity": 2, "price": 45},
-            "E": {"quantity": 2, "free_item": "B"},
-            # Adding logic for F as per the new requirements
-            "F": {"quantity": 3, "price": 20},  # 3 for the price of 2
-        }
-        self.max_sku_length = 100
+from pprint import pprint
 
-    def validate_skus(self, skus):
-        if not isinstance(skus, str) or len(skus) > self.max_sku_length:
-            return False
-        if any(sku not in self.prices for sku in skus):
-            return False
-        if (
-            not skus.isupper() and skus != ""
-        ):  # Ensure all characters are uppercase or it's an empty string
-            return False
-        return True
-
-    def calculate_price(self, skus):
-        if not self.validate_skus(skus):
-            return -1
-        if skus == "":
-            return 0
-
-        total = 0
-        counts = {sku: skus.count(sku) for sku in set(skus)}
-
-        # Handle special offer for E before iterating
-        if "E" in counts:
-            free_bs = counts["E"] // 2
-            counts["B"] = max(0, counts.get("B", 0) - free_bs)
-
-        for sku, count in counts.items():
-            if sku == "A":
-                total += (
-                    (count // 5) * 200
-                    + ((count % 5) // 3) * 130
-                    + ((count % 5) % 3) * self.prices[sku]
-                )
-            elif sku in self.offers and "quantity" in self.offers[sku]:
-                offer = self.offers[sku]
-                if "price" in offer:  # Regular multi-buy offers
-                    total += (count // offer["quantity"]) * offer["price"] + (
-                        count % offer["quantity"]
-                    ) * self.prices[sku]
-                elif "free_item" in offer:  # Offers that give a free item
-                    total += count * self.prices[sku]
-            else:
-                total += count * self.prices[sku]
-
-        return total
-
-    @staticmethod
-    def run_tests():
-        checkout = Checkout()
-        test_cases = [
-            ("", 0),
-            ("A", 50),
-            ("B", 30),
-            ("C", 20),
-            ("D", 15),
-            ("E", 40),
-            ("a", -1),
-            ("-", -1),
-            ("ABCa", -1),
-            ("AxA", -1),
-            ("ABCDE", 155),
-            ("AA", 100),
-            ("AAA", 130),
-            ("AAAA", 180),
-            ("AAAAA", 200),
-            ("AAAAAA", 250),
-            ("AAAAAAA", 300),
-            ("AAAAAAAA", 330),
-            ("AAAAAAAAA", 380),
-            ("AAAAAAAAAA", 400),
-            ("EE", 80),
-            ("EEB", 80),
-            ("EEEB", 120),
-            ("EEEEBB", 160),
-            ("BEBEEE", 160),
-            ("BB", 45),
-            ("BBB", 75),
-            ("BBBB", 90),
-            ("ABCDEABCDE", 280),
-            ("CCADDEEBBA", 280),
-            ("AAAAAEEBAAABB", 455),
-            ("ABCDECBAABCABBAAAEEAA", 665),
-            ("F", 10),  # Single F
-            ("FF", 20),  # Two Fs
-            ("FFF", 20),  # Three Fs (one should be free)
-            ("FFFF", 30),  # Four Fs
-            ("FFFFFF", 40),  # Six Fs (two free)
-            ("FFFFFFF", 50),  # Seven Fs
-            ("FXF", -1),  # Illegal input
-            # Additional test cases involving item F
-            ("FAB", 90),  # F (10) + A (50) + B (30) = 90
-            ("FFAB", 100),  # 2F (20) + A (50) + B (30) = 100
-            ("FFFAAA", 150),  # 3F (one free, 20) + 3A (130) = 180
-            ("FFFFFFAB", 120),  # 6F (two free, 40) + A (50) + B (30) = 140
-            ("FFFFD", 45),  # 4F (one free, 30) + D (15) = 50
-            ("FFFFFFFFFF", 70),
-        ]
-
-        passed = 0
-        for skus, expected in test_cases:
-            result = checkout.calculate_price(skus)
-            if result == expected:
-                passed += 1
-            else:
-                print(
-                    f"Test failed for input '{skus}': Expected {expected}, got {result}"
-                )
-
-        return f"{passed}/{len(test_cases)} tests passed."
+pricing_table_string = """
++------+-------+------------------------+
+| Item | Price | Special offers         |
++------+-------+------------------------+
+| A    | 50    | 3A for 130, 5A for 200 |
+| B    | 30    | 2B for 45              |
+| C    | 20    |                        |
+| D    | 15    |                        |
+| E    | 40    | 2E get one B free      |
+| F    | 10    | 2F get one F free      |
+| G    | 20    |                        |
+| H    | 10    | 5H for 45, 10H for 80  |
+| I    | 35    |                        |
+| J    | 60    |                        |
+| K    | 80    | 2K for 150             |
+| L    | 90    |                        |
+| M    | 15    |                        |
+| N    | 40    | 3N get one M free      |
+| O    | 10    |                        |
+| P    | 50    | 5P for 200             |
+| Q    | 30    | 3Q for 80              |
+| R    | 50    | 3R get one Q free      |
+| S    | 30    |                        |
+| T    | 20    |                        |
+| U    | 40    | 3U get one U free      |
+| V    | 50    | 2V for 90, 3V for 130  |
+| W    | 20    |                        |
+| X    | 90    |                        |
+| Y    | 10    |                        |
+| Z    | 50    |                        |
++------+-------+------------------------+"""
 
 
-checkout_test = Checkout()
-test_results = checkout_test.run_tests()
-print(test_results)
+def parse_pricing_table(pricing_table):
+    # Split the string into lines
+    lines = pricing_table.strip().split("\n")
+
+    # Dictionary to store the parsed data
+    parsed_data = {}
+
+    for line in lines:
+        # Check if the line contains data (and is not a border)
+        if "+" not in line and "Item" not in line:
+            # Split the line into parts and strip whitespace
+            parts = [part.strip() for part in line.split("|") if part]
+
+            # Add the parsed data to the dictionary
+            if len(parts) == 3:
+                item, price, special_offers = parts
+                parsed_data[item] = {"Price": price, "Special offers": special_offers}
+
+    return parsed_data
+
+
+# Use the function
+pricing_table_dict = parse_pricing_table(pricing_table_string)
+pprint(pricing_table_dict)
+
+
+# class Checkout:
+#     def __init__(self):
+#         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10}
+#         self.offers = {
+#             "A": {"quantity": 3, "price": 130},
+#             "B": {"quantity": 2, "price": 45},
+#             "E": {"quantity": 2, "free_item": "B"},
+#             # Adding logic for F as per the new requirements
+#             "F": {"quantity": 3, "price": 20},  # 3 for the price of 2
+#         }
+#         self.max_sku_length = 100
+
+#     def validate_skus(self, skus):
+#         if not isinstance(skus, str) or len(skus) > self.max_sku_length:
+#             return False
+#         if any(sku not in self.prices for sku in skus):
+#             return False
+#         if (
+#             not skus.isupper() and skus != ""
+#         ):  # Ensure all characters are uppercase or it's an empty string
+#             return False
+#         return True
+
+#     def calculate_price(self, skus):
+#         if not self.validate_skus(skus):
+#             return -1
+#         if skus == "":
+#             return 0
+
+#         total = 0
+#         counts = {sku: skus.count(sku) for sku in set(skus)}
+
+#         # Handle special offer for E before iterating
+#         if "E" in counts:
+#             free_bs = counts["E"] // 2
+#             counts["B"] = max(0, counts.get("B", 0) - free_bs)
+
+#         for sku, count in counts.items():
+#             if sku == "A":
+#                 total += (
+#                     (count // 5) * 200
+#                     + ((count % 5) // 3) * 130
+#                     + ((count % 5) % 3) * self.prices[sku]
+#                 )
+#             elif sku in self.offers and "quantity" in self.offers[sku]:
+#                 offer = self.offers[sku]
+#                 if "price" in offer:  # Regular multi-buy offers
+#                     total += (count // offer["quantity"]) * offer["price"] + (
+#                         count % offer["quantity"]
+#                     ) * self.prices[sku]
+#                 elif "free_item" in offer:  # Offers that give a free item
+#                     total += count * self.prices[sku]
+#             else:
+#                 total += count * self.prices[sku]
+
+#         return total
+
+
+# @staticmethod
+def run_tests():
+    checkout = Checkout()
+    test_cases = [
+        ("", 0),
+        ("A", 50),
+        ("B", 30),
+        ("C", 20),
+        ("D", 15),
+        ("E", 40),
+        ("a", -1),
+        ("-", -1),
+        ("ABCa", -1),
+        ("AxA", -1),
+        ("ABCDE", 155),
+        ("AA", 100),
+        ("AAA", 130),
+        ("AAAA", 180),
+        ("AAAAA", 200),
+        ("AAAAAA", 250),
+        ("AAAAAAA", 300),
+        ("AAAAAAAA", 330),
+        ("AAAAAAAAA", 380),
+        ("AAAAAAAAAA", 400),
+        ("EE", 80),
+        ("EEB", 80),
+        ("EEEB", 120),
+        ("EEEEBB", 160),
+        ("BEBEEE", 160),
+        ("BB", 45),
+        ("BBB", 75),
+        ("BBBB", 90),
+        ("ABCDEABCDE", 280),
+        ("CCADDEEBBA", 280),
+        ("AAAAAEEBAAABB", 455),
+        ("ABCDECBAABCABBAAAEEAA", 665),
+        ("F", 10),
+        ("FF", 20),
+        ("FFF", 20),
+        ("FFFF", 30),
+        ("FFFFFF", 40),
+        ("FFFFFFF", 50),
+        ("FXF", -1),
+        ("FAB", 90),
+        ("FFAB", 100),
+        ("FFFAAA", 150),
+        ("FFFFFFAB", 120),
+        ("FFFFD", 45),
+        ("FFFFFFFFFF", 70),
+    ]
+    # run and print tests
+    passed = sum(
+        1 for skus, expected in test_cases if checkout.calculate_price(skus) == expected
+    )
+    for skus, expected in test_cases:
+        result = checkout.calculate_price(skus)
+        if result != expected:
+            print(f"Test failed for input '{skus}': Expected {expected}, got {result}")
+    return f"{passed}/{len(test_cases)} tests passed."
+
 
 # TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
 # TODO 2: Refactor the calculate_price method to reduce its complexity and improve readability.
@@ -139,8 +193,9 @@ print(test_results)
 # noinspection PyUnusedLocal
 # skus = unicode string
 def checkout(skus):
-    checkout_system = Checkout()
-    return checkout_system.calculate_price(skus)
+    # checkout_system = Checkout()
+    # return checkout_system.calculate_price(skus)
+    pass
 
 
 # CHK_R1
@@ -238,3 +293,4 @@ def checkout(skus):
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
