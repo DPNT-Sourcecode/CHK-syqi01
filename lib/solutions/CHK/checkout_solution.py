@@ -441,68 +441,19 @@ total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 print(f"\n\n total cart price : {total_cart_price_v2}")
 
 
-# this is currently outputting mostly right but it's calling cross-item offers "free".
-# free_item = parts[4]  # Assuming the free item is the last word in the offer
-# it's not 4, that's also not ideal.
-# also chanigng structure so input/output can have duplicate entries.
+# noinspection PyUnusedLocal
+# skus = unicode string
+def checkout(skus):
+    sorted_cart = sorted(list(skus))
+    best_price = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
+    return best_price
 
 
-# class Checkout:
-#     def __init__(self):
-#         self.prices = {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10}
-#         self.offers = {
-#             "A": {"quantity": 3, "price": 130},
-#             "B": {"quantity": 2, "price": 45},
-#             "E": {"quantity": 2, "free_item": "B"},
-#             # Adding logic for F as per the new requirements
-#             "F": {"quantity": 3, "price": 20},  # 3 for the price of 2
-#         }
-#         self.max_sku_length = 100
+total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-#     def validate_skus(self, skus):
-#         if not isinstance(skus, str) or len(skus) > self.max_sku_length:
-#             return False
-#         if any(sku not in self.prices for sku in skus):
-#             return False
-#         if (
-#             not skus.isupper() and skus != ""
-#         ):  # Ensure all characters are uppercase or it's an empty string
-#             return False
-#         return True
-
-#     def calculate_price(self, skus):
-#         if not self.validate_skus(skus):
-#             return -1
-#         if skus == "":
-#             return 0
-
-#         total = 0
-#         counts = {sku: skus.count(sku) for sku in set(skus)}
-
-#         # Handle special offer for E before iterating
-#         if "E" in counts:
-#             free_bs = counts["E"] // 2
-#             counts["B"] = max(0, counts.get("B", 0) - free_bs)
-
-#         for sku, count in counts.items():
-#             if sku == "A":
-#                 total += (
-#                     (count // 5) * 200
-#                     + ((count % 5) // 3) * 130
-#                     + ((count % 5) % 3) * self.prices[sku]
-#                 )
-#             elif sku in self.offers and "quantity" in self.offers[sku]:
-#                 offer = self.offers[sku]
-#                 if "price" in offer:  # Regular multi-buy offers
-#                     total += (count // offer["quantity"]) * offer["price"] + (
-#                         count % offer["quantity"]
-#                     ) * self.prices[sku]
-#                 elif "free_item" in offer:  # Offers that give a free item
-#                     total += count * self.prices[sku]
-#             else:
-#                 total += count * self.prices[sku]
-
-#         return total
+temp = checkout("AAA")
+pprint("FINAL CHECK")
+pprint(temp)
 
 
 test_cases = [
@@ -569,33 +520,6 @@ def quick_test(cart_function, test_cases):
 
 
 pprint(quick_test(apply_offers_to_cart_v2, test_cases))
-
-
-# TODO 1: Implement more robust input validation using regular expressions to filter out any non-allowed characters.
-# TODO 2: Refactor the calculate_price method to reduce its complexity and improve readability.
-# TODO 3: Consider using a database or external file for SKU data to enhance scalability and ease of updates.
-# TODO 4: Expand testing to include more edge cases, particularly for combined offers and large quantities.
-# TODO 5: Optimize for higher scale, e.g., by using more efficient data structures or algorithms.
-# TODO 6: Refactor into a more object-oriented design, perhaps by creating separate classes for Offers and SKUs.
-# TODO 7: Add type annotations throughout the code for better clarity and to facilitate static analysis with tools like mypy.
-# TODO 8: Explore using a library like Pydantic for stricter input validation and error handling.
-# TODO 9: Implement error logging and handling mechanisms for better debugging and maintenance in a production environment.
-# TODO 10: Consider the potential for a front-end integration, and how the backend logic might need to adapt for such a use case.
-
-
-# noinspection PyUnusedLocal
-# skus = unicode string
-def checkout(skus):
-    sorted_cart = sort_cart(skus)
-    best_price = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
-    return best_price
-
-
-temp = checkout("A")
-pprint("FINAL CHECK")
-pprint(temp)
-
-
 # CHK_R1
 # ROUND 1 - Our supermarket
 # The purpose of this challenge is to implement a supermarket checkout that calculates the total price of a number of items.
@@ -691,6 +615,7 @@ pprint(temp)
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
 
