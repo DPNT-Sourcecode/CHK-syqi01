@@ -495,10 +495,17 @@ def apply_offers_to_cart_v3(cart, offers):
                     actual_count = sum(working_cart.count(item) for item in group_items)
 
             else:
-                # Handle standard offers
-                offer_requirements = {
-                    item["item"]: item["count"] for item in offer_details["input"]
-                }
+                # Adjusted logic for standard offers
+                offer_requirements = {}
+                for item_details in offer_details["input"]:
+                    # Determine the item key (name)
+                    item_key = item_details.get("item")  # Safely get the 'item' key
+                    if item_key:
+                        count = item_details["count"]
+                        if item_key in offer_requirements:
+                            offer_requirements[item_key] += count
+                        else:
+                            offer_requirements[item_key] = count
 
                 # Check if the offer can be applied
                 can_apply_offer = all(
@@ -707,4 +714,5 @@ pprint(quick_test(apply_offers_to_cart_v3, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
