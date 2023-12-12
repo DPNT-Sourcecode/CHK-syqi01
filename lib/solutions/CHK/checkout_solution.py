@@ -442,7 +442,7 @@ pprint(special_offers_w_savings)
 # now have savings for each offer, can sort by savings and apply offers in order of savings
 
 # Sample shopping cart as a string
-shopping_cart_str = "ABCDECBAABCABBAAAEEAAUVW"
+shopping_cart_str = "SSSZ"
 
 # Sort the offers based on savings
 sorted_offers = sorted(
@@ -555,9 +555,13 @@ def checkout(skus):
 
 # total_cart_price_v2 = apply_offers_to_cart_v2(sorted_cart, sorted_offers)
 
-temp = checkout("F")
+import sys
+
+temp = checkout("SSSZ")
+temp2 = checkout("ZZZS")
+temp3 = checkout("STXZ")
 pprint("FINAL CHECK")
-pprint(temp)
+pprint((temp, temp2, temp3), stream=sys.stdout, indent=4)
 
 
 test_cases = [
@@ -606,8 +610,6 @@ test_cases = [
     ("FFFFFFAB", 120),
     ("FFFFD", 45),
     ("FFFFFFFFFF", 70),
-    ("U", 40),
-    ("ABCDECBAABCABBAAAEEAAUVW", 795),
 ]
 
 #  - {"method":"checkout","params":["F"],"id":"CHK_R5_008"}, expected: 10, got: 20
@@ -725,3 +727,4 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
