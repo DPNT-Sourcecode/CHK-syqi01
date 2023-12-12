@@ -483,7 +483,12 @@ def apply_offers_to_cart_v2(cart, offers):
     for offer_name, offer_details in offers:
         if offer_details.get("type") == "cross-product":
             # Handle cross-product offers
-            group_items = offer_details["input"][0]["items"]
+            # Sort the group items by price in descending order - this was the last thing going wrong.
+            # group_items = offer_details["input"][0]["items"]
+            group_items = sorted(
+                offer_details["input"][0]["items"],
+                key=lambda item: -float(pricing_dict[item]["Price"]),
+            )
             required_count = offer_details["input"][0]["count"]
             actual_count = sum(working_cart.count(item) for item in group_items)
 
@@ -727,4 +732,5 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
