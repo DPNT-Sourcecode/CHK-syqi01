@@ -615,8 +615,17 @@ test_cases = [
     ("FFFFFFAB", 120),
     ("FFFFD", 45),
     ("FFFFFFFFFF", 70),
+    ("F", 10),
+    ("U", 40),
+    ("ABCDEFGHIJKLMNOPQRSTUVW", 795),
+    ("SSSZ", 65),
+    ("ZZZS", 65),
+    ("STXZ", 62),
 ]
 
+#  - {"method":"checkout","params":["SSSZ"],"id":"CHK_R5_142"}, expected: 65, got: 66
+#  - {"method":"checkout","params":["ZZZS"],"id":"CHK_R5_144"}, expected: 65, got: 66
+#  - {"method":"checkout","params":["STXZ"],"id":"CHK_R5_146"}, expected: 62, got: 66
 #  - {"method":"checkout","params":["F"],"id":"CHK_R5_008"}, expected: 10, got: 20
 #  - {"method":"checkout","params":["U"],"id":"CHK_R5_023"}, expected: 40, got: 120
 #  - {"method":"checkout","params":["ABCDEFGHIJKLMNOPQRSTUVW"],"id":"CHK_R5_033"}, expected: 795, got: 885
@@ -732,5 +741,6 @@ pprint(quick_test(apply_offers_to_cart_v2, test_cases))
 # Where:
 #  - param[0] = a String containing the SKUs of all the products in the basket
 #  - @return = an Integer representing the total checkout value of the items
+
 
 
